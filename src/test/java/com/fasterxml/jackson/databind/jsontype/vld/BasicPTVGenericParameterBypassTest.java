@@ -1,0 +1,254 @@
+package com.fasterxml.jackson.databind.jsontype.vld;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.InvalidTypeIdException;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+
+/**
+ * [databind#5988]: generic type IDs must not bypass {@link com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator}.
+ *<p>
+ * {@code DatabindContext._resolveAndValidateGeneric()} historically validated the raw
+ * container class name (before {@code '<'}) only; if approved, it constructed the full
+ * parameterized type and returned it without validating the type parameters. An attacker
+ * could supply a type ID such as {@code "java.util.ArrayList<EvilGadget>"} to smuggle a
+ * non-allow-listed element type past the PTV. The fix recursively validates each non-
+ * trivial type parameter (and array element types appearing as parameters).
+ */
+public class BasicPTVGenericParameterBypassTest extends BaseMapTest
+{
+    // Fully-qualified name of this test class -- works as a name-prefix matcher
+    // for every nested helper (SafePayload, EvilGadget, Container) via their
+    // "outer.Name$Nested" form. Used in testNamePrefixAllowsBothContainerAndParameter.
+    private static final String OWN_CLASS_NAME_PREFIX =
+            BasicPTVGenericParameterBypassTest.class.getName();
+
+    /**
+     * Records every constructor invocation; lets the tests prove that a non-allow-listed
+     * type is not actually instantiated when the validator rejects it.
+     */
+    static final List<String> INSTANTIATIONS = new ArrayList<String>();
+
+    /** Stand-in "unsafe" type, never allow-listed. */
+    public static class EvilGadget {
+        public String secret;
+        public EvilGadget() {
+            INSTANTIATIONS.add(EvilGadget.class.getName());
+        }
+    }
+
+    /** Always allow-listed in these tests. */
+    public static class SafePayload {
+        public String data;
+        public SafePayload() {}
+        // String-arg constructor: doubles as Jackson's automatic Map-key
+        // deserializer when SafePayload appears as a Map key type
+        // (used by testMapWithAllowedKeyAndValueAccepted).
+        public SafePayload(String d) { this.data = d; }
+    }
+
+    static class Container {
+        @JsonTypeInfo(use = Id.CLASS, include = As.WRAPPER_ARRAY)
+        public Object value;
+
+        public Container() {}
+    }
+
+    // NOTE: only polymorphicTypeValidator() is set (no activateDefaultTyping and no
+    // allowIfBaseType(Object)). validateBaseType returning INDETERMINATE keeps the
+    // original PTV in force; an ALLOWED return value would swap in
+    // LaissezFaireSubTypeValidator and would defeat the per-subtype check.
+    private ObjectMapper mapperWithArrayListAndSafePayload() {
+        BasicPolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
+                .allowIfSubType("java.util.ArrayList")
+                .allowIfSubType("java.util.HashMap")
+                .allowIfSubType(SafePayload.class)
+                .build();
+        return jsonMapperBuilder()
+                .polymorphicTypeValidator(ptv)
+                .build();
+    }
+
+    // (1) Sanity check: ArrayList<SafePayload> -- both container and element are allowed.
+    public void testAllowedGenericTypeAccepted() throws Exception
+    {
+        ObjectMapper mapper = mapperWithArrayListAndSafePayload();
+
+        String json = "{\"value\":[\"java.util.ArrayList<" + SafePayload.class.getName() + ">\","
+                + "[{\"data\":\"hello\"}]]}";
+
+        Container result = mapper.readValue(json, Container.class);
+        assertNotNull(result.value);
+        assertEquals(ArrayList.class, result.value.getClass());
+    }
+
+    // (2) Issue reproduction: ArrayList<EvilGadget> -- container is allowed, element is not.
+    // Pre-fix this slipped past the PTV. Post-fix the element type is validated and denied.
+    public void testGenericTypeIdBypassesAllowlistDenied() throws Exception
+    {
+        ObjectMapper mapper = mapperWithArrayListAndSafePayload();
+
+        final String evilClass = EvilGadget.class.getName();
+        String json = "{\"value\":[\"java.util.ArrayList<" + evilClass + ">\","
+                + "[{\"secret\":\"hacked\"}]]}";
+
+        INSTANTIATIONS.clear();
+        try {
+            mapper.readValue(json, Container.class);
+            fail("ArrayList<EvilGadget> must be denied because EvilGadget is not allow-listed");
+        } catch (InvalidTypeIdException e) {
+            verifyException(e, evilClass);
+        }
+        assertEquals("EvilGadget must not be instantiated when its element form is denied;"
+                + " observed=" + INSTANTIATIONS, 0, INSTANTIATIONS.size());
+    }
+
+    // (3) Map value position: HashMap<String, EvilGadget> -- container allowed (HashMap),
+    // String key is a benign JDK type but not allow-listed -> denied at the key step.
+    public void testMapValueGadgetDenied() throws Exception
+    {
+        ObjectMapper mapper = mapperWithArrayListAndSafePayload();
+
+        final String evilClass = EvilGadget.class.getName();
+        String json = "{\"value\":[\"java.util.HashMap<java.lang.String," + evilClass + ">\","
+                + "{\"k\":{\"secret\":\"hacked\"}}]}";
+
+        INSTANTIATIONS.clear();
+        String msg = null;
+        try {
+            mapper.readValue(json, Container.class);
+            fail("HashMap<String,EvilGadget> must be denied (neither String nor EvilGadget are allow-listed)");
+        } catch (InvalidTypeIdException e) {
+            msg = e.getMessage();
+        }
+        // The PTV walks containedType(i) in order: key (String) is checked first and
+        // denied because String is not on the allow-list; this is still a correct
+        // denial of the overall type id. Either class name in the exception message is
+        // acceptable -- the iteration order is the only thing that picks one over the
+        // other.
+        assertTrue("Denial message should reference the rejected parameter type; was: " + msg,
+                msg != null && (msg.contains("java.lang.String") || msg.contains(evilClass)));
+        assertEquals(0, INSTANTIATIONS.size());
+    }
+
+    // (4) Map key position: HashMap<EvilGadget, String> -- key denied.
+    public void testMapKeyGadgetDenied() throws Exception
+    {
+        ObjectMapper mapper = mapperWithArrayListAndSafePayload();
+
+        final String evilClass = EvilGadget.class.getName();
+        String json = "{\"value\":[\"java.util.HashMap<" + evilClass + ",java.lang.String>\","
+                + "{}]}";
+
+        INSTANTIATIONS.clear();
+        try {
+            mapper.readValue(json, Container.class);
+            fail("HashMap<EvilGadget,String> must be denied: key type EvilGadget is not allow-listed");
+        } catch (InvalidTypeIdException e) {
+            verifyException(e, evilClass);
+        }
+        assertEquals(0, INSTANTIATIONS.size());
+    }
+
+    // (5) Nested generics: ArrayList<ArrayList<EvilGadget>> -- inner element denied.
+    public void testNestedGenericGadgetDenied() throws Exception
+    {
+        ObjectMapper mapper = mapperWithArrayListAndSafePayload();
+
+        final String evilClass = EvilGadget.class.getName();
+        String json = "{\"value\":[\"java.util.ArrayList<java.util.ArrayList<" + evilClass + ">>\","
+                + "[[{\"secret\":\"hacked\"}]]]}";
+
+        INSTANTIATIONS.clear();
+        try {
+            mapper.readValue(json, Container.class);
+            fail("Nested ArrayList<ArrayList<EvilGadget>> must be denied at the innermost element");
+        } catch (InvalidTypeIdException e) {
+            verifyException(e, evilClass);
+        }
+        assertEquals(0, INSTANTIATIONS.size());
+    }
+
+    // (6) Sanity check for Map: HashMap<SafePayload, SafePayload> -- both key+value allowed.
+    public void testMapWithAllowedKeyAndValueAccepted() throws Exception
+    {
+        ObjectMapper mapper = mapperWithArrayListAndSafePayload();
+
+        String safe = SafePayload.class.getName();
+        String json = "{\"value\":[\"java.util.HashMap<" + safe + "," + safe + ">\",{}]}";
+
+        Container result = mapper.readValue(json, Container.class);
+        assertNotNull(result.value);
+        assertEquals(HashMap.class, result.value.getClass());
+    }
+
+    // (7) Wildcards / Object resolve to Object.class via TypeFactory; that's the
+    // intentional escape hatch and must keep working.
+    public void testObjectTypeParameterAccepted() throws Exception
+    {
+        ObjectMapper mapper = mapperWithArrayListAndSafePayload();
+
+        // Use SafePayload as the element so deserialization itself can complete; the
+        // point of this test is purely that "java.util.ArrayList<java.lang.Object>" as
+        // a *type id* is not rejected by the generic-parameter validation pass.
+        String json = "{\"value\":[\"java.util.ArrayList<java.lang.Object>\",[]]}";
+        Container result = mapper.readValue(json, Container.class);
+        assertNotNull(result.value);
+        assertEquals(ArrayList.class, result.value.getClass());
+    }
+
+    // (8) Array as a generic parameter: ArrayList<EvilGadget[]> must be denied because
+    // the array's element type (EvilGadget) is not allow-listed. Exercises the
+    // isArrayType() recursion branch in _validateTypeParameter.
+    public void testGadgetArrayAsGenericParameterDenied() throws Exception
+    {
+        ObjectMapper mapper = mapperWithArrayListAndSafePayload();
+
+        final String evilClass = EvilGadget.class.getName();
+        final String arrayId = "[L" + evilClass + ";";
+        // ArrayList<EvilGadget[]> type id, with an array containing one inner element.
+        String json = "{\"value\":[\"java.util.ArrayList<" + arrayId + ">\","
+                + "[[{\"secret\":\"hacked\"}]]]}";
+
+        INSTANTIATIONS.clear();
+        try {
+            mapper.readValue(json, Container.class);
+            fail("ArrayList<EvilGadget[]> must be denied: array element EvilGadget is not allow-listed");
+        } catch (InvalidTypeIdException e) {
+            verifyException(e, evilClass);
+        }
+        assertEquals(0, INSTANTIATIONS.size());
+    }
+
+    // (9) Name-prefix PTV: allowIfSubType(String) registers a name matcher, not a class
+    // matcher. Type parameters should be approved by the same name-prefix rule used
+    // for the container -- otherwise a configuration intended to allow everything
+    // under "com.example." would reject "com.example.Foo" as a type parameter.
+    public void testNamePrefixAllowsBothContainerAndParameter() throws Exception
+    {
+        BasicPolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
+                .allowIfSubType("java.util.ArrayList")
+                // Allow SafePayload by its enclosing-class name prefix (name matcher
+                // only -- no class matcher is registered for SafePayload).
+                .allowIfSubType(OWN_CLASS_NAME_PREFIX)
+                .build();
+        ObjectMapper mapper = jsonMapperBuilder()
+                .polymorphicTypeValidator(ptv)
+                .build();
+
+        String json = "{\"value\":[\"java.util.ArrayList<" + SafePayload.class.getName() + ">\","
+                + "[{\"data\":\"hello\"}]]}";
+
+        Container result = mapper.readValue(json, Container.class);
+        assertNotNull(result.value);
+        assertEquals(ArrayList.class, result.value.getClass());
+    }
+}

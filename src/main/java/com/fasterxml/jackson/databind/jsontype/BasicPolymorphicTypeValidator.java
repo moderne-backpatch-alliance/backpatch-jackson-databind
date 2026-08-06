@@ -444,6 +444,15 @@ public class BasicPolymorphicTypeValidator
                     || Modifier.isAbstract(subClass.getModifiers())) {
                 return Validity.ALLOWED;
             }
+            // [databind#5988]: after array unwrap, also consult name-based matchers
+            // against the element class name -- the upstream caller only saw the
+            // array's type id (e.g. "[Lcom.example.Foo;") which does not match name
+            // prefixes configured for the element type itself. Self-call to
+            // validateSubClassName keeps the matcher logic in one place and honors
+            // overrides in subclasses that extend name handling.
+            if (validateSubClassName(ctxt, baseType, subClass.getName()) == Validity.ALLOWED) {
+                return Validity.ALLOWED;
+            }
         }
         if (_subClassMatchers != null)  {
             for (TypeMatcher m : _subClassMatchers) {
