@@ -17,6 +17,12 @@ import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
  */
 public class BasicPTVArrayComponentBypassTest extends BaseMapTest
 {
+    // Fully-qualified name of this test class -- works as a name-prefix matcher
+    // for every nested helper (SafePayload, FakeGadget, ObjectWrapper) via their
+    // "outer.Name$Nested" form. Used in namePrefixAllowsBothElementAndArray.
+    private static final String OWN_CLASS_NAME_PREFIX =
+            BasicPTVArrayComponentBypassTest.class.getName();
+
     /**
      * Records every constructor invocation; lets the tests prove that an
      *  un-allow-listed type is not actually instantiated.
@@ -147,6 +153,59 @@ public class BasicPTVArrayComponentBypassTest extends BaseMapTest
         assertNotNull(out);
         assertEquals(int[].class, out.value.getClass());
         assertTrue(Arrays.equals(new int[] { 1, 2, 3 }, (int[]) out.value));
+    }
+
+    // For [databind#5988]: name-prefix matchers must also apply to array element
+    // types after unwrap. Previously validateSubType() consulted only the class-
+    // based matchers, so allowIfSubType("com.fasterxml.jackson...") (a name matcher)
+    // would allow SafePayload directly but reject SafePayload[].
+    public void testNamePrefixAllowsBothElementAndArray() throws Exception
+    {
+        PolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
+                // Name prefix matcher only -- no class matcher is registered.
+                .allowIfSubType(OWN_CLASS_NAME_PREFIX)
+                .allowIfSubTypeIsArray()
+                .build();
+        ObjectMapper mapper = jsonMapperBuilder()
+                .activateDefaultTyping(ptv, DefaultTyping.NON_FINAL)
+                .build();
+
+        final String arrayId = "[L" + SafePayload.class.getName() + ";";
+        final String json = "{\"value\":[\"" + arrayId + "\",[{\"data\":42}]]}";
+
+        ObjectWrapper out = mapper.readValue(json, ObjectWrapper.class);
+        assertNotNull(out);
+        assertEquals(SafePayload[].class, out.value.getClass());
+        SafePayload[] arr = (SafePayload[]) out.value;
+        assertEquals(1, arr.length);
+        assertEquals(42, arr[0].data);
+    }
+
+    // For [databind#5988]: even after the name-matcher fix, an array whose element
+    // type is NOT covered by the name prefix must still be denied.
+    public void testNamePrefixDeniesUnmatchedArrayElement() throws Exception
+    {
+        PolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
+                // Name prefix that intentionally does NOT cover FakeGadget.
+                .allowIfSubType("nonexistent.package.")
+                .allowIfSubTypeIsArray()
+                .build();
+        ObjectMapper mapper = jsonMapperBuilder()
+                .activateDefaultTyping(ptv, DefaultTyping.NON_FINAL)
+                .build();
+
+        final String classId = FakeGadget.class.getName();
+        final String arrayId = "[L" + classId + ";";
+        final String json = "{\"value\":[\"" + arrayId + "\",[{\"cmd\":\"x\"}]]}";
+
+        INSTANTIATIONS.clear();
+        try {
+            mapper.readValue(json, ObjectWrapper.class);
+            fail("FakeGadget[] must be denied: FakeGadget is not covered by name prefix");
+        } catch (InvalidTypeIdException e) {
+            verifyException(e, arrayId);
+        }
+        assertEquals(0, INSTANTIATIONS.size());
     }
 
     private ObjectMapper mapperWithSafePayloadAndArrays() {
