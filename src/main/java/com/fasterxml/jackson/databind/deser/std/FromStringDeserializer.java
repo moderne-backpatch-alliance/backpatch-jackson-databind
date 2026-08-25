@@ -287,16 +287,16 @@ public abstract class FromStringDeserializer<T> extends StdScalarDeserializer<T>
 
                     int j = value.indexOf(':', i);
                     int port = j > -1 ? Integer.parseInt(value.substring(j + 1)) : 0;
-                    return new InetSocketAddress(value.substring(0, i + 1), port);
+                    return _inetSocketAddress(value.substring(0, i + 1), port);
                 }
                 int ix = value.indexOf(':');
                 if (ix >= 0 && value.indexOf(':', ix + 1) < 0) {
                     // host:port
                     int port = Integer.parseInt(value.substring(ix+1));
-                    return new InetSocketAddress(value.substring(0, ix), port);
+                    return _inetSocketAddress(value.substring(0, ix), port);
                 }
                 // host or unbracketed IPv6, without port number
-                return new InetSocketAddress(value, 0);
+                return _inetSocketAddress(value, 0);
             case STD_STRING_BUILDER:
                 return new StringBuilder(value);
             }
@@ -329,6 +329,11 @@ public abstract class FromStringDeserializer<T> extends StdScalarDeserializer<T>
                 }
             }
             return -1;
+        }
+
+        protected InetSocketAddress _inetSocketAddress(String host, int port) {
+            // 05-May-2026, tatu: [databind#5951] Prevent DNS lookup:
+            return InetSocketAddress.createUnresolved(host, port);
         }
     }
 }
