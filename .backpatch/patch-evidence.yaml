@@ -1,0 +1,17 @@
+schema: osera-patch-evidence/0.1.0
+producer: moderne
+release: 2.13.5.1-backpatch-00001
+baseline: v2.13.5+backpatch.baseline
+fixes:
+  - cve: CVE-2025-52999
+    upstream: https://nvd.nist.gov/vuln/detail/CVE-2025-52999
+    artifacts:
+      - com.fasterxml.jackson.core:jackson-core
+    note: New in this release; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00001 (backpatch-jackson-core@b9e4b3a).
+tests:
+  commit: 23c77497c4515b6ab523138f14a1448e5a1e2fe3
+  command: mvn -B -q test -Dmaven.javadoc.skip=true -Denforcer.skip=true -Dgpg.skip=true
+  runtime: OpenJDK 1.8.0_372 (Zulu), Apache Maven 3.9.14
+  report: jackson-databind-2.13.5.1-backpatch-00001-tests.zip
+  result: pass
+  note: no source change in this repository up to this release, the tree at the tag is the upstream baseline plus the OSERA plumbing; the upstream suite of jackson-databind at the release commit, 2697 test(s) run, 0 failed
