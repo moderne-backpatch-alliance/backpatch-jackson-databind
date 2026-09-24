@@ -1,6 +1,6 @@
 schema: osera-patch-evidence/0.1.0
 producer: moderne
-release: 2.13.5.1-backpatch-00005
+release: 2.13.5.1-backpatch-00006
 baseline: v2.13.5+backpatch.baseline
 fixes:
   - cve: CVE-2025-52999
@@ -27,11 +27,16 @@ fixes:
     upstream: https://nvd.nist.gov/vuln/detail/CVE-2026-50193
     artifacts:
       - com.fasterxml.jackson.core:jackson-databind
-    note: New in this release; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00005 (backpatch-jackson-databind@845e792).
+    note: Carried from 2.13.5.1-backpatch-00005; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00005 (backpatch-jackson-databind@845e792).
+  - cve: CVE-2026-54514
+    upstream: https://nvd.nist.gov/vuln/detail/CVE-2026-54514
+    artifacts:
+      - com.fasterxml.jackson.core:jackson-databind
+    note: New in this release; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00006 (backpatch-jackson-databind@19b3144).
 tests:
-  commit: 845e79280adcca0c5156d0709d18d6bc756426a9
+  commit: 19b3144c3226f3dce894fb16de76da9f382fd2be
   command: mvn -B -q test -Dmaven.javadoc.skip=true -Denforcer.skip=true -Dgpg.skip=true
   runtime: OpenJDK 1.8.0_372 (Zulu), Apache Maven 3.9.14
-  report: jackson-databind-2.13.5.1-backpatch-00005-tests.zip
+  report: jackson-databind-2.13.5.1-backpatch-00006-tests.zip
   result: pass
   note: the fix commits touched no test file; the suite of jackson-databind at the release commit, 2714 test(s) run, 0 failed
