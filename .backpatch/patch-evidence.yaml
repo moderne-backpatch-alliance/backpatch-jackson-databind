@@ -1,6 +1,6 @@
 schema: osera-patch-evidence/0.1.0
 producer: moderne
-release: 2.13.5.1-backpatch-00002
+release: 2.13.5.1-backpatch-00003
 baseline: v2.13.5+backpatch.baseline
 fixes:
   - cve: CVE-2025-52999
@@ -12,11 +12,16 @@ fixes:
     upstream: https://github.com/advisories/GHSA-r7wm-3cxj-wff9
     artifacts:
       - com.fasterxml.jackson.core:jackson-core
-    note: New in this release; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00002 (backpatch-jackson-core@4d6b1ea).
+    note: Carried from 2.13.5.1-backpatch-00002; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00002 (backpatch-jackson-core@4d6b1ea).
+  - cve: CVE-2026-54513
+    upstream: https://nvd.nist.gov/vuln/detail/CVE-2026-54513
+    artifacts:
+      - com.fasterxml.jackson.core:jackson-databind
+    note: New in this release; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00003 (backpatch-jackson-databind@c3a8387).
 tests:
-  commit: 23c77497c4515b6ab523138f14a1448e5a1e2fe3
+  commit: c3a838724fccb98ba9a6db8d52fba07c7400bf59
   command: mvn -B -q test -Dmaven.javadoc.skip=true -Denforcer.skip=true -Dgpg.skip=true
   runtime: OpenJDK 1.8.0_372 (Zulu), Apache Maven 3.9.14
-  report: jackson-databind-2.13.5.1-backpatch-00002-tests.zip
+  report: jackson-databind-2.13.5.1-backpatch-00003-tests.zip
   result: pass
-  note: no source change in this repository up to this release, the tree at the tag is the upstream baseline plus the OSERA plumbing; the upstream suite of jackson-databind at the release commit, 2697 test(s) run, 0 failed
+  note: the fix commits touched no test file; the suite of jackson-databind at the release commit, 2701 test(s) run, 0 failed
