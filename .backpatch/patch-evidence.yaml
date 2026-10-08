@@ -1,6 +1,6 @@
 schema: osera-patch-evidence/0.1.0
 producer: moderne
-release: 2.13.5.1-backpatch-00007
+release: 2.13.5.1-backpatch-00008
 baseline: v2.13.5+backpatch.baseline
 fixes:
   - cve: CVE-2025-52999
@@ -37,11 +37,16 @@ fixes:
     upstream: https://nvd.nist.gov/vuln/detail/CVE-2026-54515
     artifacts:
       - com.fasterxml.jackson.core:jackson-databind
-    note: New in this release; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00007 (backpatch-jackson-databind@d3d76f1).
+    note: Carried from 2.13.5.1-backpatch-00007; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00007 (backpatch-jackson-databind@d3d76f1).
+  - cve: CVE-2023-3894
+    upstream: https://nvd.nist.gov/vuln/detail/CVE-2023-3894
+    artifacts:
+      - com.fasterxml.jackson.dataformat:jackson-dataformat-toml
+    note: New in this release; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00008 (backpatch-jackson-dataformats-text@a127de5).
 tests:
-  commit: d3d76f12ebd0a8b5055c827839c2ac5eb6e5ecf5
-  command: mvn -B -q test -Dmaven.javadoc.skip=true -Denforcer.skip=true -Dgpg.skip=true
-  runtime: OpenJDK 1.8.0_372 (Zulu), Apache Maven 3.9.14
-  report: jackson-databind-2.13.5.1-backpatch-00007-tests.zip
+  commit: ffc0024f907896c0b16eb8e69f12607798fcd2a4
+  command: none in this repository
+  runtime: none, no build or test ran for this release
+  report: carried, see the evidence of the release named in the note
   result: pass
-  note: the fix commits touched no test file; the suite of jackson-databind at the release commit, 2716 test(s) run, 0 failed
+  note: this release changes only the versions this repository pins, nothing ran here; its test provenance is CVE-2023-3894 carried by moderne-backpatch-alliance/backpatch-jackson-dataformats-text at v2.13.5.1-backpatch-00008, whose .backpatch/patch-evidence.yaml records the tests that ran
