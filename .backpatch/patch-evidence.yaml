@@ -1,6 +1,6 @@
 schema: osera-patch-evidence/0.1.0
 producer: moderne
-release: 2.13.5.1-backpatch-00009
+release: 2.13.5.1-backpatch-00010
 baseline: v2.13.5+backpatch.baseline
 fixes:
   - cve: CVE-2025-52999
@@ -47,16 +47,22 @@ fixes:
     upstream: https://nvd.nist.gov/vuln/detail/CVE-2026-89425
     artifacts:
       - com.fasterxml.jackson.core:jackson-core
-    note: New in this release; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00009 (backpatch-jackson-core@f87ed4f).
+    note: Carried from 2.13.5.1-backpatch-00009; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00009 (backpatch-jackson-core@f87ed4f).
   - cve: CVE-2026-68494
     upstream: https://nvd.nist.gov/vuln/detail/CVE-2026-68494
     artifacts:
       - com.fasterxml.jackson.core:jackson-core
-    note: New in this release; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00009 (backpatch-jackson-core@4d6b1ea..f87ed4f).
+    note: Carried from 2.13.5.1-backpatch-00009; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00009 (backpatch-jackson-core@4d6b1ea..f87ed4f).
+  - cve: CVE-2026-91776
+    upstream: https://nvd.nist.gov/vuln/detail/CVE-2026-91776
+    artifacts:
+      - com.fasterxml.jackson.core:jackson-databind
+    note: New in this release; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00010 (backpatch-jackson-databind@09f5955).
 tests:
-  commit: 25cdc13c092bee2ce911e6c9447d22444aaca452
-  command: none in this repository
-  runtime: none, no build or test ran for this release
-  report: carried, see the evidence of the release named in the note
+  commit: 09f595519d6c36231cccaab2345aab23b5d02cf0
+  command: mvn -B -q test -Dmaven.javadoc.skip=true -Denforcer.skip=true -Dgpg.skip=true
+  runtime: OpenJDK 1.8.0_382 (Zulu), Apache Maven 3.9.16
+  report: jackson-databind-2.13.5.1-backpatch-00010-tests.zip
+  report_sha256: 7fa68ad3eaf9fd4540cacef58a053f82816116439785311f1d426acdbc6d43e9
   result: pass
-  note: this release changes only the versions this repository pins, nothing ran here; its test provenance is CVE-2026-89425 carried by moderne-backpatch-alliance/backpatch-jackson-core at v2.13.5.1-backpatch-00009, whose .backpatch/patch-evidence.yaml records the tests that ran; CVE-2026-68494 carried by moderne-backpatch-alliance/backpatch-jackson-core at v2.13.5.1-backpatch-00009, whose .backpatch/patch-evidence.yaml records the tests that ran
+  note: the suite of jackson-databind at the tested commit, 2723 test(s) run, 0 failed; it includes TypeIdCacheGrowthTest and UnknownTypeIdCachingTest, which the fix commit added and 5 of whose 7 tests fail without the fix
