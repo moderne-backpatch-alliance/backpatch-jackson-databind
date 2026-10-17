@@ -857,6 +857,11 @@ public class BeanDeserializer
                 continue;
             }
             if (creatorProp != null) {
+                // [databind#5971]: honor active view for creator properties here too
+                if ((activeView != null) && !creatorProp.visibleInView(activeView)) {
+                    p.skipChildren();
+                    continue;
+                }
                 // Last creator property to set?
                 if (buffer.assignParameter(creatorProp,
                         _deserializeWithErrorWrapping(p, ctxt, creatorProp))) {
