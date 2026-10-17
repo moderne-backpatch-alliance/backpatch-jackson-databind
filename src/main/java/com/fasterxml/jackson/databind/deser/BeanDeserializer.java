@@ -476,6 +476,11 @@ public class BeanDeserializer
             if ((prop != null) &&
                 // [databind#3938]: except if it's MethodProperty
                 (!_beanType.isRecordType() || (prop instanceof MethodProperty))) {
+                // [databind#5969]: must honor active view here too
+                if ((activeView != null) && !prop.visibleInView(activeView)) {
+                    p.skipChildren();
+                    continue;
+                }
                 try {
                     buffer.bufferProperty(prop, _deserializeWithErrorWrapping(p, ctxt, prop));
                 } catch (UnresolvedForwardReference reference) {
@@ -931,6 +936,11 @@ public class BeanDeserializer
             // regular property? needs buffering
             SettableBeanProperty prop = _beanProperties.find(propName);
             if (prop != null) {
+                // [databind#5969]: must honor active view here too
+                if ((activeView != null) && !prop.visibleInView(activeView)) {
+                    p.skipChildren();
+                    continue;
+                }
                 buffer.bufferProperty(prop, _deserializeWithErrorWrapping(p, ctxt, prop));
                 continue;
             }
