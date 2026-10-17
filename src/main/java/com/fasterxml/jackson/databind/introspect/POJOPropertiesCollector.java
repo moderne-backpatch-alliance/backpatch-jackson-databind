@@ -994,9 +994,27 @@ public class POJOPropertiesCollector
                 prop.removeIgnored();
                 if (!prop.couldDeserialize()) {
                     _collectIgnorals(prop.getName());
+                } else if (!_forSerialization && _hasOnlyNonVisibleFields(prop)) {
+                    // [databind#5967]: remaining fields are non-visible (kept only for
+                    // INFER_PROPERTY_MUTATORS) and must not bypass the ignored setter
+                    prop._fields = null;
+                    _collectIgnorals(prop.getName());
                 }
             }
         }
+    }
+
+    private static boolean _hasOnlyNonVisibleFields(POJOPropertyBuilder prop)
+    {
+        if (prop.hasSetter() || prop.hasConstructorParameter()) {
+            return false;
+        }
+        for (POJOPropertyBuilder.Linked<AnnotatedField> n = prop._fields; n != null; n = n.next) {
+            if (n.isVisible) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
