@@ -370,16 +370,16 @@ _coercedTypeDesc());
 
                     int j = value.indexOf(':', i);
                     int port = j > -1 ? Integer.parseInt(value.substring(j + 1)) : 0;
-                    return new InetSocketAddress(value.substring(0, i + 1), port);
+                    return _inetSocketAddress(value.substring(0, i + 1), port);
                 }
                 int ix = value.indexOf(':');
                 if (ix >= 0 && value.indexOf(':', ix + 1) < 0) {
                     // host:port
                     int port = Integer.parseInt(value.substring(ix+1));
-                    return new InetSocketAddress(value.substring(0, ix), port);
+                    return _inetSocketAddress(value.substring(0, ix), port);
                 }
                 // host or unbracketed IPv6, without port number
-                return new InetSocketAddress(value, 0);
+                return _inetSocketAddress(value, 0);
             }
             VersionUtil.throwInternal();
             return null;
@@ -490,6 +490,20 @@ _coercedTypeDesc());
                 // should we really just swallow the exception?
                 return new Locale(first, second, third);
             }
+        }
+
+        // Host names are never looked up while reading: an unresolved address defers
+        // DNS to the caller. IP literals are parsed by the JDK without a lookup.
+        private static InetSocketAddress _inetSocketAddress(String host, int port) {
+            String literal = host;
+            if ((host.length() > 2) && (host.charAt(0) == '[')
+                    && (host.charAt(host.length() - 1) == ']')) {
+                literal = host.substring(1, host.length() - 1);
+            }
+            if (InetAddressValidator.isInetAddress(literal)) {
+                return new InetSocketAddress(host, port);
+            }
+            return InetSocketAddress.createUnresolved(host, port);
         }
     }
 

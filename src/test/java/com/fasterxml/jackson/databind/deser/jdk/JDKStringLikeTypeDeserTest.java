@@ -245,6 +245,27 @@ public class JDKStringLikeTypeDeserTest
         address = MAPPER.readValue(q(HOST_AND_PORT), InetSocketAddress.class);
         assertEquals(HOST, address.getHostName());
         assertEquals(80, address.getPort());
+
+        // [databind#5951]: should NOT resolve address
+        address = MAPPER.readValue(q("localhost:9999"), InetSocketAddress.class);
+        assertTrue(address.isUnresolved(),
+                "`InetSocketAddress` resolved localhost during deserialization: "+ address);
+    }
+
+    // CVE-2026-54514: host names stay unresolved, but IP literals (parsed without
+    // a lookup) still come back resolved, usable for Socket.connect() as before
+    @Test
+    public void testInetSocketAddressLiteralsStayResolved() throws IOException
+    {
+        for (String input : new String[] { "127.0.0.1:8080", "[::1]:443", "::1", "10.1.2.3" }) {
+            InetSocketAddress address = MAPPER.readValue(q(input), InetSocketAddress.class);
+            assertFalse(address.isUnresolved(), "literal came back unresolved: " + input);
+            assertNotNull(address.getAddress());
+        }
+        InetSocketAddress address = MAPPER.readValue(q("localhost"), InetSocketAddress.class);
+        assertTrue(address.isUnresolved());
+        assertEquals("localhost", address.getHostString());
+        assertEquals(0, address.getPort());
     }
 
     @Test
