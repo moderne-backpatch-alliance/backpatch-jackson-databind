@@ -180,6 +180,30 @@ public class JDKStringLikeTypeDeserTest extends BaseMapTest
         address = MAPPER.readValue(q(HOST_AND_PORT), InetSocketAddress.class);
         assertEquals(HOST, address.getHostName());
         assertEquals(80, address.getPort());
+
+        // [databind#5951]: should NOT resolve address
+        address = MAPPER.readValue(q("localhost:9999"), InetSocketAddress.class);
+        assertTrue("`InetSocketAddress` resolved localhost during deserialization: "+ address,
+                address.isUnresolved());
+    }
+
+    // [databind#5951]: IP literals need no DNS lookup and stay resolved, so
+    // that the address can still be connected to
+    public void testInetSocketAddressLiteralsStayResolved() throws IOException
+    {
+        InetSocketAddress address = MAPPER.readValue(q("127.0.0.1:8080"), InetSocketAddress.class);
+        assertFalse(address.isUnresolved());
+        assertEquals("127.0.0.1", address.getAddress().getHostAddress());
+        assertEquals(8080, address.getPort());
+
+        address = MAPPER.readValue(q("[::1]:443"), InetSocketAddress.class);
+        assertFalse(address.isUnresolved());
+        assertEquals("0:0:0:0:0:0:0:1", address.getAddress().getHostAddress());
+        assertEquals(443, address.getPort());
+
+        address = MAPPER.readValue(q("::1"), InetSocketAddress.class);
+        assertFalse(address.isUnresolved());
+        assertEquals(0, address.getPort());
     }
 
     public void testPattern() throws IOException
