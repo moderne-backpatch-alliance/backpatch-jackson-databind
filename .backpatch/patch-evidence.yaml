@@ -1,0 +1,20 @@
+schema: osera-patch-evidence/0.1.0
+producer: moderne
+release: 2.15.4.1-backpatch-00001
+baseline: v2.15.4+backpatch.baseline
+fixes:
+  - cve: CVE-2026-18401
+    upstream_fix_url: https://github.com/FasterXML/jackson-core/commit/b0c428e6f993e1b5ece5c1c3cb2523e887cd52cf
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-18401
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-core/commit/f1497ff
+    basis: adapted
+    artifacts:
+      - com.fasterxml.jackson.core:jackson-core
+    note: New in this release; ported onto 2.15.4; fixed at 2.15.4.1-backpatch-00001 (backpatch-jackson-core@f1497ff).
+tests:
+  commit: 3bf83c17335bca1ae61fbd0a7aa144056cd4b754
+  command: none in this repository
+  runtime: none, no build or test ran for this release
+  report: carried, see the evidence of the release named in the note
+  result: pass
+  note: this release changes only the versions this repository pins, nothing ran here; its test provenance is CVE-2026-18401 carried by moderne-backpatch-alliance/backpatch-jackson-core at v2.15.4.1-backpatch-00001, whose .backpatch/patch-evidence.yaml records the tests that ran
