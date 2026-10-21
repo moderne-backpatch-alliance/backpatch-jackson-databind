@@ -1,6 +1,6 @@
 schema: osera-patch-evidence/0.1.0
 producer: moderne
-release: 2.19.4.1-backpatch-00006
+release: 2.19.4.1-backpatch-00007
 baseline: v2.19.4+backpatch.baseline
 fixes:
   - cve: CVE-2026-18401
@@ -51,11 +51,19 @@ fixes:
     artifacts:
       - com.fasterxml.jackson.core:jackson-databind
     note: New in 2.19.4.1-backpatch-00006 (backpatch-jackson-databind@8dfa7e2).
+  - cve: CVE-2026-54512
+    upstream_fix_url: https://github.com/FasterXML/jackson-databind/commit/434d6c511de7fdd9872f29157aafb6162d12d8d5
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-54512
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-databind/commit/8083767
+    basis: adapted
+    artifacts:
+      - com.fasterxml.jackson.core:jackson-databind
+    note: New in 2.19.4.1-backpatch-00007 (backpatch-jackson-databind@8083767).
 tests:
-  commit: 8dfa7e2c5057951ffcd966538369a057c4894383
+  commit: 8083767ce5bc26291c7c6dedf02a02a42c36a617
   command: JAVA_HOME=<jdk-8> mvn -B clean test
   runtime: Azul Zulu (Java 1.8.0_382), Apache Maven 3.9.16, macOS aarch64
-  report: jackson-databind-2.19.4.1-backpatch-00006-tests.zip
-  report_sha256: 1c001f895a1a8cb2f369a804e5689dfd3a3ef69c27dfc165880ad4cceed91046
+  report: jackson-databind-2.19.4.1-backpatch-00007-tests.zip
+  report_sha256: e4faca9904872416ce94794e9e254c8c4d3a2da92fd6ea7573726d31d5a5680d
   result: pass
-  note: the full suite, 3449 tests run, 0 failed, 0 skipped; the regression tests for CVE-2026-54513 are BasicPTVArrayComponentBypassTest; the suite ran at 981855319f0e, the same tree as this commit apart from .backpatch/patch-evidence.yaml
+  note: the full suite, 3461 tests run, 0 failed, 0 skipped; the regression tests for CVE-2026-54512 are BasicPTVArrayComponentBypassTest, BasicPTVGenericParameterBypassTest; the suite ran at 6f43bc16dd1b, the same tree as this commit apart from .backpatch/patch-evidence.yaml
