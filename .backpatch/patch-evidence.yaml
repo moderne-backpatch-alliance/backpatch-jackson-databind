@@ -1,6 +1,6 @@
 schema: osera-patch-evidence/0.1.0
 producer: moderne
-release: 2.19.4.1-backpatch-00005
+release: 2.19.4.1-backpatch-00006
 baseline: v2.19.4+backpatch.baseline
 fixes:
   - cve: CVE-2026-18401
@@ -10,7 +10,7 @@ fixes:
     basis: adapted
     artifacts:
       - com.fasterxml.jackson.core:jackson-core
-    note: Carried from 2.19.4.1-backpatch-00001; ported onto 2.19.4; fixed at 2.19.4.1-backpatch-00001 (backpatch-jackson-core@5fe0714).
+    note: New in 2.19.4.1-backpatch-00001 (backpatch-jackson-core@5fe0714).
   - cve: CVE-2026-68494
     upstream_fix_url: https://github.com/FasterXML/jackson-core/commit/4cdd529749da396cc7edf6d4a2aad41d47902641
     advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-68494
@@ -18,7 +18,7 @@ fixes:
     basis: backport
     artifacts:
       - com.fasterxml.jackson.core:jackson-core
-    note: Carried from 2.19.4.1-backpatch-00002; ported onto 2.19.4; fixed at 2.19.4.1-backpatch-00002 (backpatch-jackson-core@adbacf4).
+    note: New in 2.19.4.1-backpatch-00002 (backpatch-jackson-core@adbacf4).
   - cve: CVE-2026-89425
     upstream_fix_url: https://github.com/FasterXML/jackson-core/commit/211cf2c5d91abbec38067f37efc1363cd4e88ee3
     advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-89425
@@ -26,7 +26,7 @@ fixes:
     basis: adapted
     artifacts:
       - com.fasterxml.jackson.core:jackson-core
-    note: Carried from 2.19.4.1-backpatch-00003; ported onto 2.19.4; fixed at 2.19.4.1-backpatch-00003 (backpatch-jackson-core@a6020af).
+    note: New in 2.19.4.1-backpatch-00003 (backpatch-jackson-core@a6020af).
   - cve: CVE-2026-89407
     upstream_fix_url: https://github.com/FasterXML/jackson-core/commit/e7acd64cc99bd346704423dc2bfea1ab0a08ddff
     advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-89407
@@ -34,7 +34,7 @@ fixes:
     basis: backport
     artifacts:
       - com.fasterxml.jackson.core:jackson-core
-    note: Carried from 2.19.4.1-backpatch-00004; ported onto 2.19.4; fixed at 2.19.4.1-backpatch-00004 (backpatch-jackson-core@5fad3be).
+    note: New in 2.19.4.1-backpatch-00004 (backpatch-jackson-core@5fad3be).
   - cve: CVE-2026-68498
     upstream_fix_url: https://github.com/FasterXML/jackson-core/commit/2cd206de1163e3fcff7bdaca425274f00668b075
     advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-68498
@@ -42,11 +42,20 @@ fixes:
     basis: backport
     artifacts:
       - com.fasterxml.jackson.core:jackson-core
-    note: New in this release; ported onto 2.19.4; fixed at 2.19.4.1-backpatch-00005 (backpatch-jackson-core@f68cc67).
+    note: New in 2.19.4.1-backpatch-00005 (backpatch-jackson-core@f68cc67).
+  - cve: CVE-2026-54513
+    upstream_fix_url: https://github.com/FasterXML/jackson-databind/commit/01d1692c8d0ed03e51a0e3c4f8a9e6908e4931e5
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-54513
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-databind/commit/8dfa7e2
+    basis: adapted
+    artifacts:
+      - com.fasterxml.jackson.core:jackson-databind
+    note: New in 2.19.4.1-backpatch-00006 (backpatch-jackson-databind@8dfa7e2).
 tests:
-  commit: 3a5090af3f5c7f73a20215e1a1db2487aff083ba
-  command: none in this repository
-  runtime: none, no build or test ran for this release
-  report: carried, see the evidence of the release named in the note
+  commit: 8dfa7e2c5057951ffcd966538369a057c4894383
+  command: JAVA_HOME=<jdk-8> mvn -B clean test
+  runtime: Azul Zulu (Java 1.8.0_382), Apache Maven 3.9.16, macOS aarch64
+  report: jackson-databind-2.19.4.1-backpatch-00006-tests.zip
+  report_sha256: 1c001f895a1a8cb2f369a804e5689dfd3a3ef69c27dfc165880ad4cceed91046
   result: pass
-  note: this release changes only the versions this repository pins, nothing ran here; its test provenance is CVE-2026-68498 carried by moderne-backpatch-alliance/backpatch-jackson-core at v2.19.4.1-backpatch-00005, whose .backpatch/patch-evidence.yaml records the tests that ran
+  note: the full suite, 3449 tests run, 0 failed, 0 skipped; the regression tests for CVE-2026-54513 are BasicPTVArrayComponentBypassTest; the suite ran at 981855319f0e, the same tree as this commit apart from .backpatch/patch-evidence.yaml
