@@ -1,73 +1,153 @@
 schema: osera-patch-evidence/0.1.0
 producer: moderne
-release: 2.13.5.1-backpatch-00011
+release: 2.13.5.1-backpatch-00012
 baseline: v2.13.5+backpatch.baseline
 fixes:
   - cve: CVE-2025-52999
-    upstream: https://nvd.nist.gov/vuln/detail/CVE-2025-52999
+    upstream_fix_url: https://github.com/FasterXML/jackson-core/commit/54f78a9cff5e3bace1cf8042ac1b4c3785dc9f5e
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2025-52999
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-core/commit/b9e4b3a
+    basis: adapted
     artifacts:
       - com.fasterxml.jackson.core:jackson-core
-    note: Carried from 2.13.5.1-backpatch-00001; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00001 (backpatch-jackson-core@b9e4b3a).
+    note: New in 2.13.5.1-backpatch-00001 (backpatch-jackson-core@b9e4b3a); superseded at 2.13.5.1-backpatch-00012, which ships it in jackson-jr-all too.
   - cve: GHSA-r7wm-3cxj-wff9
-    upstream: https://github.com/advisories/GHSA-r7wm-3cxj-wff9
+    upstream_fix_url: https://github.com/FasterXML/jackson-core/pull/1611
+    advisory_url: https://github.com/advisories/GHSA-r7wm-3cxj-wff9
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-core/commit/4d6b1ea
+    basis: adapted
     artifacts:
       - com.fasterxml.jackson.core:jackson-core
-    note: Carried from 2.13.5.1-backpatch-00002; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00002 (backpatch-jackson-core@4d6b1ea).
+    note: New in 2.13.5.1-backpatch-00002 (backpatch-jackson-core@4d6b1ea); superseded at 2.13.5.1-backpatch-00012, which ships it in jackson-jr-all too.
   - cve: CVE-2026-54513
-    upstream: https://nvd.nist.gov/vuln/detail/CVE-2026-54513
+    upstream_fix_url: https://github.com/FasterXML/jackson-databind/commit/01d1692c8d0ed03e51a0e3c4f8a9e6908e4931e5
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-54513
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-databind/commit/c3a8387
+    basis: backport
     artifacts:
       - com.fasterxml.jackson.core:jackson-databind
-    note: Carried from 2.13.5.1-backpatch-00003; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00003 (backpatch-jackson-databind@c3a8387).
+    note: New in 2.13.5.1-backpatch-00003 (backpatch-jackson-databind@c3a8387).
   - cve: CVE-2026-54512
-    upstream: https://nvd.nist.gov/vuln/detail/CVE-2026-54512
+    upstream_fix_url: https://github.com/FasterXML/jackson-databind/compare/01d1692c8d0ed03e51a0e3c4f8a9e6908e4931e5...26a8c70bd42949ad72fbd9608e9f060ce661cb11
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-54512
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-databind/commit/dc49d7c
+    basis: backport
     artifacts:
       - com.fasterxml.jackson.core:jackson-databind
-    note: Carried from 2.13.5.1-backpatch-00004; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00004 (backpatch-jackson-databind@dc49d7c).
+    note: New in 2.13.5.1-backpatch-00004 (backpatch-jackson-databind@dc49d7c).
   - cve: CVE-2026-50193
-    upstream: https://nvd.nist.gov/vuln/detail/CVE-2026-50193
+    upstream_fix_url: https://github.com/FasterXML/jackson-databind/compare/396af5f23409cd1cde542d59e2b73134678674ea...a1fa4ae4ecf5cee16da465985f135f3e81816f8c
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-50193
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-databind/commit/845e792
+    basis: backport
     artifacts:
       - com.fasterxml.jackson.core:jackson-databind
-    note: Carried from 2.13.5.1-backpatch-00005; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00005 (backpatch-jackson-databind@845e792).
+    note: New in 2.13.5.1-backpatch-00005 (backpatch-jackson-databind@845e792).
   - cve: CVE-2026-54514
-    upstream: https://nvd.nist.gov/vuln/detail/CVE-2026-54514
+    upstream_fix_url: https://github.com/FasterXML/jackson-databind/compare/5622b802fa6e4c3a8cba9354d6fb0f540cec170a...1f5a1037b1e9e05920e755cb35f198bcd46667e4
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-54514
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-databind/commit/19b3144
+    basis: backport
     artifacts:
       - com.fasterxml.jackson.core:jackson-databind
-    note: Carried from 2.13.5.1-backpatch-00006; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00006 (backpatch-jackson-databind@19b3144).
+    note: New in 2.13.5.1-backpatch-00006 (backpatch-jackson-databind@19b3144).
   - cve: CVE-2026-54515
-    upstream: https://nvd.nist.gov/vuln/detail/CVE-2026-54515
+    upstream_fix_url: https://github.com/FasterXML/jackson-databind/commit/bc1613c765704703ec7385e314fa8b19448e1ddd
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-54515
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-databind/commit/d3d76f1
+    basis: backport
     artifacts:
       - com.fasterxml.jackson.core:jackson-databind
-    note: Carried from 2.13.5.1-backpatch-00007; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00007 (backpatch-jackson-databind@d3d76f1).
+    note: New in 2.13.5.1-backpatch-00007 (backpatch-jackson-databind@d3d76f1).
   - cve: CVE-2023-3894
-    upstream: https://nvd.nist.gov/vuln/detail/CVE-2023-3894
+    upstream_fix_url: https://github.com/FasterXML/jackson-dataformats-text/commit/5dd5f740aedcf37adad7ffece460e75e54abb0ed
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2023-3894
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-dataformats-text/commit/a127de5
+    basis: adapted
     artifacts:
       - com.fasterxml.jackson.dataformat:jackson-dataformat-toml
-    note: Carried from 2.13.5.1-backpatch-00008; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00008 (backpatch-jackson-dataformats-text@a127de5).
+    note: New in 2.13.5.1-backpatch-00008 (backpatch-jackson-dataformats-text@a127de5).
   - cve: CVE-2026-89425
-    upstream: https://nvd.nist.gov/vuln/detail/CVE-2026-89425
+    upstream_fix_url: https://github.com/FasterXML/jackson-core/commit/211cf2c5d91abbec38067f37efc1363cd4e88ee3
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-89425
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-core/commit/f87ed4f
+    basis: adapted
     artifacts:
       - com.fasterxml.jackson.core:jackson-core
-    note: Carried from 2.13.5.1-backpatch-00009; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00009 (backpatch-jackson-core@f87ed4f).
+    note: New in 2.13.5.1-backpatch-00009 (backpatch-jackson-core@f87ed4f); superseded at 2.13.5.1-backpatch-00012, which ships it in jackson-jr-all too.
   - cve: CVE-2026-68494
-    upstream: https://nvd.nist.gov/vuln/detail/CVE-2026-68494
+    upstream_fix_url: https://github.com/FasterXML/jackson-core/pull/1611
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-68494
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-core/compare/4d6b1ea~1...f87ed4f
+    basis: adapted
     artifacts:
       - com.fasterxml.jackson.core:jackson-core
-    note: Carried from 2.13.5.1-backpatch-00009; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00009 (backpatch-jackson-core@4d6b1ea..f87ed4f).
+    note: New in 2.13.5.1-backpatch-00009 (backpatch-jackson-core@4d6b1ea..f87ed4f); superseded at 2.13.5.1-backpatch-00012, which ships it in jackson-jr-all too.
   - cve: CVE-2026-91776
-    upstream: https://nvd.nist.gov/vuln/detail/CVE-2026-91776
+    upstream_fix_url: https://github.com/FasterXML/jackson-databind/commit/2870d1d6dc1b7e1c07ee11dd5b04ab71cddbb577
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-91776
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-databind/commit/09f5955
+    basis: backport
     artifacts:
       - com.fasterxml.jackson.core:jackson-databind
-    note: Carried from 2.13.5.1-backpatch-00010; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00010 (backpatch-jackson-databind@09f5955).
+    note: New in 2.13.5.1-backpatch-00010 (backpatch-jackson-databind@09f5955).
   - cve: CVE-2026-91777
-    upstream: https://nvd.nist.gov/vuln/detail/CVE-2026-91777
+    upstream_fix_url: https://github.com/FasterXML/jackson-databind/commit/37ad9b81712cbb9fb62c2d2c1813593252a24b67
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-91777
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-databind/commit/c717b9a
+    basis: backport
     artifacts:
       - com.fasterxml.jackson.core:jackson-databind
-    note: New in this release; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00011 (backpatch-jackson-databind@c717b9a).
+    note: New in 2.13.5.1-backpatch-00011 (backpatch-jackson-databind@c717b9a).
+  - cve: CVE-2026-59889
+    upstream_fix_url: https://github.com/FasterXML/jackson-databind/commit/d627a8a86fcb062429282f79f3f256f181ed2c7b
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-59889
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-databind/commit/88e3e55
+    basis: backport
+    artifacts:
+      - com.fasterxml.jackson.core:jackson-databind
+    note: New in 2.13.5.1-backpatch-00012 (backpatch-jackson-databind@88e3e55).
+  - cve: CVE-2025-52999
+    upstream_fix_url: https://github.com/FasterXML/jackson-core/commit/54f78a9cff5e3bace1cf8042ac1b4c3785dc9f5e
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2025-52999
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-core/commit/5cb243d
+    basis: adapted
+    artifacts:
+      - com.fasterxml.jackson.core:jackson-core
+      - com.fasterxml.jackson.jr:jackson-jr-all
+    note: New in 2.13.5.1-backpatch-00012 (backpatch-jackson-core@5cb243d), an empty correction commit; the fix is b9e4b3a, now also in jackson-jr-all's shaded copy of jackson-core.
+  - cve: GHSA-r7wm-3cxj-wff9
+    upstream_fix_url: https://github.com/FasterXML/jackson-core/pull/1611
+    advisory_url: https://github.com/advisories/GHSA-r7wm-3cxj-wff9
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-core/commit/5cb243d
+    basis: adapted
+    artifacts:
+      - com.fasterxml.jackson.core:jackson-core
+      - com.fasterxml.jackson.jr:jackson-jr-all
+    note: New in 2.13.5.1-backpatch-00012 (backpatch-jackson-core@5cb243d), an empty correction commit; the fix is 4d6b1ea, now also in jackson-jr-all's shaded copy of jackson-core.
+  - cve: CVE-2026-89425
+    upstream_fix_url: https://github.com/FasterXML/jackson-core/commit/211cf2c5d91abbec38067f37efc1363cd4e88ee3
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-89425
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-core/commit/5cb243d
+    basis: adapted
+    artifacts:
+      - com.fasterxml.jackson.core:jackson-core
+      - com.fasterxml.jackson.jr:jackson-jr-all
+    note: New in 2.13.5.1-backpatch-00012 (backpatch-jackson-core@5cb243d), an empty correction commit; the fix is f87ed4f, now also in jackson-jr-all's shaded copy of jackson-core.
+  - cve: CVE-2026-68494
+    upstream_fix_url: https://github.com/FasterXML/jackson-core/pull/1611
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-68494
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-core/commit/5cb243d
+    basis: adapted
+    artifacts:
+      - com.fasterxml.jackson.core:jackson-core
+      - com.fasterxml.jackson.jr:jackson-jr-all
+    note: New in 2.13.5.1-backpatch-00012 (backpatch-jackson-core@5cb243d), an empty correction commit; the fix is 4d6b1ea..f87ed4f, now also in jackson-jr-all's shaded copy of jackson-core.
 tests:
-  commit: c717b9ac2dce1e737fdcc6866e27df834684a9f9
-  command: mvn -B -q test -Dmaven.javadoc.skip=true -Denforcer.skip=true -Dgpg.skip=true
-  runtime: OpenJDK 1.8.0_382 (Zulu), Apache Maven 3.9.16
-  report: jackson-databind-2.13.5.1-backpatch-00011-tests.zip
-  report_sha256: 3f2d0825c67e245a3c13b707e311886e85cd301c631578b65742cc4309e4933a
+  commit: 88e3e559f2f719c8433d24f3e9f1b9294920be06
+  command: JAVA_HOME=<jdk-8> mvn -B -Dmaven.javadoc.skip=true -Denforcer.skip=true -Dgpg.skip=true clean test
+  runtime: Azul Zulu (Java 1.8.0_382), Apache Maven 3.9.16, macOS aarch64
+  report: jackson-databind-2.13.5.1-backpatch-00012-tests.zip
+  report_sha256: d9a82a7d0e51b46b997edf832638ac53b82ccf3bd74d35fde79e51d6fe35a097
   result: pass
-  note: the suite of jackson-databind at the tested commit, 2728 test(s) run, 0 failed; it includes ForwardReferenceResolutionOrder6204Test, which the fix commit added and 2 of whose 5 tests fail without the fix
+  note: the full suite, 2732 tests run, 0 failed, 0 skipped; the regression tests for CVE-2026-59889 are UnwrappedViewBypass6060Test, 2 of whose 4 tests fail with UnwrappedPropertyHandler at its parent
