@@ -107,10 +107,22 @@ public class CoreXMLDeserializers extends Deserializers.Base
         {
             switch (_kind) {
             case TYPE_DURATION:
+                // [databind#6127] DatatypeFactory.newDuration() parses date/time components
+                // into BigIntegers (and fractional seconds into BigDecimal), using the
+                // O(n^2) BigInteger(String)/BigDecimal(String) constructors. Rather than
+                // isolating individual components we check length of the whole value as a
+                // conservative upper bound: it is never shorter than any single component,
+                // and no valid Duration comes anywhere near the (default 1000) limit.
+                _verifyNumberLength(ctxt, value);
                 return _dataTypeFactory.newDuration(value);
             case TYPE_QNAME:
                 return QName.valueOf(value);
             case TYPE_G_CALENDAR:
+                // [databind#6127] Similar to TYPE_DURATION above: length of the whole value
+                // is checked as a conservative upper bound for numeric components, before
+                // handing value to DatatypeFactory.newXMLGregorianCalendar(), which parses
+                // fractional seconds into a BigDecimal via O(n^2) BigDecimal(String).
+                _verifyNumberLength(ctxt, value);
                 Date d;
                 try {
                     d = _parseDate(value, ctxt);
@@ -123,6 +135,20 @@ public class CoreXMLDeserializers extends Deserializers.Base
                 return _gregorianFromDate(ctxt, d);
             }
             throw new IllegalStateException();
+        }
+
+        // Upstream's StreamReadConstraints.DEFAULT_MAX_NUM_LEN; 2.13 has no StreamReadConstraints.
+        private final static int MAX_NUMBER_LENGTH = 1000;
+
+        private void _verifyNumberLength(DeserializationContext ctxt, String value)
+            throws IOException
+        {
+            final int len = value.length();
+            if (len > MAX_NUMBER_LENGTH) {
+                throw new JsonParseException(ctxt.getParser(), String.format(
+                        "Number value length (%d) exceeds the maximum allowed (%d)",
+                        len, MAX_NUMBER_LENGTH));
+            }
         }
 
         protected XMLGregorianCalendar _gregorianFromDate(DeserializationContext ctxt,
