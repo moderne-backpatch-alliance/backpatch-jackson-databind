@@ -1,6 +1,6 @@
 schema: osera-patch-evidence/0.1.0
 producer: moderne
-release: 2.13.5.1-backpatch-00013
+release: 2.13.5.1-backpatch-00014
 baseline: v2.13.5+backpatch.baseline
 fixes:
   - cve: CVE-2025-52999
@@ -150,12 +150,21 @@ fixes:
     basis: adapted
     artifacts:
       - com.fasterxml.jackson.core:jackson-databind
-    note: New in this release; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00013 (backpatch-jackson-databind@964de55).
+    note: Carried from 2.13.5.1-backpatch-00013; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00013 (backpatch-jackson-databind@964de55).
+  - cve: CVE-2026-18401
+    upstream_fix_url: https://github.com/FasterXML/jackson-core/commit/b0c428e6f993e1b5ece5c1c3cb2523e887cd52cf
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-18401
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-core/commit/58bfacd
+    basis: adapted
+    artifacts:
+      - com.fasterxml.jackson.core:jackson-core
+      - com.fasterxml.jackson.jr:jackson-jr-all
+    note: New in this release; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00014 (backpatch-jackson-core@58bfacd).
 tests:
-  commit: 964de55d1dd8e0e817d813c858a9b8d7eec294de
-  command: JAVA_HOME=<jdk-8> mvn -B -Dmaven.javadoc.skip=true -Denforcer.skip=true -Dgpg.skip=true clean test
-  runtime: Azul Zulu (Java 1.8.0_382), Apache Maven 3.9.16, macOS aarch64
-  report: jackson-databind-2.13.5.1-backpatch-00013-tests.zip
-  report_sha256: 525811ac07167f9c0b73c10f059612169c383ea6b1d5dcb48fb0763a2d947a9d
+  commit: de436edfb78a9c55617c741a6aa1069391a4b683
+  command: none in this repository
+  runtime: none, no build or test ran for this release
+  report: jackson-core-2.13.5.1-backpatch-00014-tests.zip
+  report_sha256: c6e074813b31b10ac2069d58d81ba9128ace824b9c3729dd0a5940092ffe6bbb
   result: pass
-  note: the full suite, 2736 tests run, 0 failed, 0 errors, 0 skipped; the regression tests for CVE-2026-68497 are MiscJavaXMLTypesReadWriteTest testDurationNumberLengthConstraint, testXMLGregorianCalendarNumberLengthConstraint and testDefaultNumberLengthConstraints, which fail without the CoreXMLDeserializers change, and testQNameNotConstrainedByNumberLength, which passes either way
+  note: this release changes only the versions this repository pins, nothing ran here; its test provenance is CVE-2026-18401 carried by moderne-backpatch-alliance/backpatch-jackson-core at v2.13.5.1-backpatch-00014, whose .backpatch/patch-evidence.yaml records the tests that ran
