@@ -1,6 +1,6 @@
 schema: osera-patch-evidence/0.1.0
 producer: moderne
-release: 2.19.4.1-backpatch-00021
+release: 2.19.4.1-backpatch-00022
 baseline: v2.19.4+backpatch.baseline
 fixes:
   - cve: CVE-2026-18401
@@ -171,7 +171,7 @@ fixes:
     artifacts:
       - com.fasterxml.jackson.core:jackson-core
       - com.fasterxml.jackson.jr:jackson-jr-all
-    note: New in this release; ported onto 2.19.4; fixed at 2.19.4.1-backpatch-00021 (backpatch-jackson-core@36b04e7).
+    note: Carried from 2.19.4.1-backpatch-00021; ported onto 2.19.4; fixed at 2.19.4.1-backpatch-00021 (backpatch-jackson-core@36b04e7).
   - cve: CVE-2026-68494
     upstream_fix_url: https://github.com/FasterXML/jackson-core/commit/4cdd529749da396cc7edf6d4a2aad41d47902641
     advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-68494
@@ -180,7 +180,7 @@ fixes:
     artifacts:
       - com.fasterxml.jackson.core:jackson-core
       - com.fasterxml.jackson.jr:jackson-jr-all
-    note: New in this release; ported onto 2.19.4; fixed at 2.19.4.1-backpatch-00021 (backpatch-jackson-core@36b04e7).
+    note: Carried from 2.19.4.1-backpatch-00021; ported onto 2.19.4; fixed at 2.19.4.1-backpatch-00021 (backpatch-jackson-core@36b04e7).
   - cve: CVE-2026-89425
     upstream_fix_url: https://github.com/FasterXML/jackson-core/commit/211cf2c5d91abbec38067f37efc1363cd4e88ee3
     advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-89425
@@ -189,7 +189,7 @@ fixes:
     artifacts:
       - com.fasterxml.jackson.core:jackson-core
       - com.fasterxml.jackson.jr:jackson-jr-all
-    note: New in this release; ported onto 2.19.4; fixed at 2.19.4.1-backpatch-00021 (backpatch-jackson-core@36b04e7).
+    note: Carried from 2.19.4.1-backpatch-00021; ported onto 2.19.4; fixed at 2.19.4.1-backpatch-00021 (backpatch-jackson-core@36b04e7).
   - cve: CVE-2026-89407
     upstream_fix_url: https://github.com/FasterXML/jackson-core/commit/e7acd64cc99bd346704423dc2bfea1ab0a08ddff
     advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-89407
@@ -198,7 +198,7 @@ fixes:
     artifacts:
       - com.fasterxml.jackson.core:jackson-core
       - com.fasterxml.jackson.jr:jackson-jr-all
-    note: New in this release; ported onto 2.19.4; fixed at 2.19.4.1-backpatch-00021 (backpatch-jackson-core@36b04e7).
+    note: Carried from 2.19.4.1-backpatch-00021; ported onto 2.19.4; fixed at 2.19.4.1-backpatch-00021 (backpatch-jackson-core@36b04e7).
   - cve: CVE-2026-68498
     upstream_fix_url: https://github.com/FasterXML/jackson-core/commit/2cd206de1163e3fcff7bdaca425274f00668b075
     advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-68498
@@ -207,11 +207,11 @@ fixes:
     artifacts:
       - com.fasterxml.jackson.core:jackson-core
       - com.fasterxml.jackson.jr:jackson-jr-all
-    note: New in this release; ported onto 2.19.4; fixed at 2.19.4.1-backpatch-00021 (backpatch-jackson-core@36b04e7).
+    note: Carried from 2.19.4.1-backpatch-00021; ported onto 2.19.4; fixed at 2.19.4.1-backpatch-00021 (backpatch-jackson-core@36b04e7).
 tests:
-  commit: ce973d069f6083b725f2c7db54a4c1e773c84e31
+  commit: 59a02b8575362507343390eef7a343f6fb5938a6
   command: none in this repository
   runtime: none, no build or test ran for this release
   report: carried, see the evidence of the release named in the note
   result: pass
-  note: this release changes only the versions this repository pins, nothing ran here; its test provenance is CVE-2026-18401 carried by moderne-backpatch-alliance/backpatch-jackson-core at v2.19.4.1-backpatch-00021, whose .backpatch/patch-evidence.yaml records the tests that ran; CVE-2026-68494 carried by moderne-backpatch-alliance/backpatch-jackson-core at v2.19.4.1-backpatch-00021, whose .backpatch/patch-evidence.yaml records the tests that ran; CVE-2026-89425 carried by moderne-backpatch-alliance/backpatch-jackson-core at v2.19.4.1-backpatch-00021, whose .backpatch/patch-evidence.yaml records the tests that ran; CVE-2026-89407 carried by moderne-backpatch-alliance/backpatch-jackson-core at v2.19.4.1-backpatch-00021, whose .backpatch/patch-evidence.yaml records the tests that ran; CVE-2026-68498 carried by moderne-backpatch-alliance/backpatch-jackson-core at v2.19.4.1-backpatch-00021, whose .backpatch/patch-evidence.yaml records the tests that ran
+  note: "this release is a tooling update, it carries no new fix, nothing ran here; its test provenance is tooling-2026-11-03-jackson-2.19: a tooling update of moderne-backpatch-alliance/backpatch-jackson-bom at v2.19.4.1-backpatch-00021, whose .backpatch/patch-evidence.yaml says what ran"
