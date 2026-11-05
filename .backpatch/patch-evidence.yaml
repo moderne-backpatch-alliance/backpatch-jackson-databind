@@ -1,6 +1,6 @@
 schema: osera-patch-evidence/0.1.0
 producer: moderne
-release: 2.13.5.1-backpatch-00015
+release: 2.13.5.1-backpatch-00016
 baseline: v2.13.5+backpatch.baseline
 fixes:
   - cve: CVE-2025-52999
@@ -161,9 +161,9 @@ fixes:
       - com.fasterxml.jackson.jr:jackson-jr-all
     note: Carried from 2.13.5.1-backpatch-00014; ported onto 2.13.5; fixed at 2.13.5.1-backpatch-00014 (backpatch-jackson-core@58bfacd).
 tests:
-  commit: 38a964ba4f05e69314290f5f3b801f7c1b77ed14
+  commit: 0be3d7574b412a5aab87788073dd722af65e3a3c
   command: none in this repository
   runtime: none, no build or test ran for this release
   report: carried, see the evidence of the release named in the note
   result: pass
-  note: "this release is a tooling update, it carries no new fix, nothing ran here; its test provenance is tooling-2026-11-03-jackson-2.13: a tooling update of moderne-backpatch-alliance/backpatch-jackson-bom at v2.13.5.1-backpatch-00014, whose .backpatch/patch-evidence.yaml says what ran"
+  note: "this release is a tooling update, it carries no new fix, nothing ran here; its test provenance is tooling-2026-11-05-jackson-2.13: a tooling update of moderne-backpatch-alliance/backpatch-jackson-bom at v2.13.5.1-backpatch-00015, whose .backpatch/patch-evidence.yaml says what ran"
