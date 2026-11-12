@@ -753,7 +753,8 @@ public abstract class BeanDeserializerBase
             // 16-May-2016, tatu: How about per-property case-insensitivity?
             Boolean B = format.getFeature(JsonFormat.Feature.ACCEPT_CASE_INSENSITIVE_PROPERTIES);
             if (B != null) {
-                BeanPropertyMap propsOrig = _beanProperties;
+                // Must be contextual's map: this one still has the ignored properties.
+                BeanPropertyMap propsOrig = contextual._beanProperties;
                 BeanPropertyMap props = propsOrig.withCaseInsensitivity(B.booleanValue());
                 if (props != propsOrig) {
                     contextual = contextual.withBeanProperties(props);
