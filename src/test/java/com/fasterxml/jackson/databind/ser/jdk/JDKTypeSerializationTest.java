@@ -112,8 +112,12 @@ public class JDKTypeSerializationTest
     {
         assertEquals(quote("127.0.0.1:8080"),
                 MAPPER.writeValueAsString(new InetSocketAddress("127.0.0.1", 8080)));
+        assertEquals(quote("127.0.0.1:8080"),
+                MAPPER.writeValueAsString(InetSocketAddress.createUnresolved("127.0.0.1", 8080)));
         assertEquals(quote("google.com:6667"),
                 MAPPER.writeValueAsString(new InetSocketAddress("google.com", 6667)));
+        assertEquals(quote("google.com:6667"),
+                MAPPER.writeValueAsString(InetSocketAddress.createUnresolved("google.com", 6667)));
         assertEquals(quote("[2001:db8:85a3:8d3:1319:8a2e:370:7348]:443"),
                 MAPPER.writeValueAsString(new InetSocketAddress("2001:db8:85a3:8d3:1319:8a2e:370:7348", 443)));
     }

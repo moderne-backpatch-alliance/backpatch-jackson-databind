@@ -165,15 +165,15 @@ public class JDKStringLikeTypesTest extends BaseMapTest
     public void testInetSocketAddress() throws IOException
     {
         InetSocketAddress address = MAPPER.readValue(quote("127.0.0.1"), InetSocketAddress.class);
-        assertEquals("127.0.0.1", address.getAddress().getHostAddress());
+        assertEquals("127.0.0.1", address.getHostName());
 
         InetSocketAddress ip6 = MAPPER.readValue(
                 quote("2001:db8:85a3:8d3:1319:8a2e:370:7348"), InetSocketAddress.class);
-        assertEquals("2001:db8:85a3:8d3:1319:8a2e:370:7348", ip6.getAddress().getHostAddress());
+        assertEquals("2001:db8:85a3:8d3:1319:8a2e:370:7348", ip6.getHostName());
 
         InetSocketAddress ip6port = MAPPER.readValue(
                 quote("[2001:db8:85a3:8d3:1319:8a2e:370:7348]:443"), InetSocketAddress.class);
-        assertEquals("2001:db8:85a3:8d3:1319:8a2e:370:7348", ip6port.getAddress().getHostAddress());
+        assertEquals("[2001:db8:85a3:8d3:1319:8a2e:370:7348]", ip6port.getHostName());
         assertEquals(443, ip6port.getPort());
 
         // should we try resolving host names? That requires connectivity...
@@ -185,6 +185,11 @@ public class JDKStringLikeTypesTest extends BaseMapTest
         address = MAPPER.readValue(quote(HOST_AND_PORT), InetSocketAddress.class);
         assertEquals(HOST, address.getHostName());
         assertEquals(80, address.getPort());
+
+        // [databind#5951]: should NOT resolve address
+        address = MAPPER.readValue(quote("localhost:9999"), InetSocketAddress.class);
+        assertTrue("`InetSocketAddress` resolved localhost during deserialization: "+ address,
+                address.isUnresolved());
     }
 
     public void testRegexps() throws IOException
