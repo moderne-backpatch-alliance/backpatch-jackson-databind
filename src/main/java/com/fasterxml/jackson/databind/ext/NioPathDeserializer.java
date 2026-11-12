@@ -8,6 +8,8 @@ import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.spi.FileSystemProvider;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.ServiceLoader;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -24,6 +26,8 @@ public class NioPathDeserializer extends StdScalarDeserializer<Path>
 {
     private static final long serialVersionUID = 1;
 
+    public final static Collection<String> DEFAULT_ALLOWED_SCHEMES = Collections.singletonList("file");
+
     private static final boolean areWindowsFilePathsSupported;
     static {
         boolean isWindowsRootFound = false;
@@ -37,7 +41,17 @@ public class NioPathDeserializer extends StdScalarDeserializer<Path>
         areWindowsFilePathsSupported = isWindowsRootFound;
     }
 
-    public NioPathDeserializer() { super(Path.class); }
+    protected final Collection<String> _allowedSchemes;
+
+    public NioPathDeserializer() { this(DEFAULT_ALLOWED_SCHEMES); }
+
+    public NioPathDeserializer(Collection<String> allowedSchemes) {
+        super(Path.class);
+        if (allowedSchemes == null) {
+            throw new IllegalArgumentException("Argument `allowedSchemes` must not be null");
+        }
+        _allowedSchemes = allowedSchemes;
+    }
 
     @Override
     public Path deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
@@ -65,11 +79,16 @@ public class NioPathDeserializer extends StdScalarDeserializer<Path>
         } catch (URISyntaxException e) {
             return (Path) ctxt.handleInstantiationProblem(handledType(), value, e);
         }
+        final String scheme = uri.getScheme();
+        if (scheme != null && !_isSchemeAllowed(scheme)) {
+            return (Path) ctxt.handleWeirdStringValue(Path.class, value,
+                    "scheme '%s' not allowed for Path deserialization (allowed: %s)",
+                    scheme, _allowedSchemesDesc());
+        }
         try {
             return Paths.get(uri);
         } catch (FileSystemNotFoundException cause) {
             try {
-                final String scheme = uri.getScheme();
                 // We want to use the current thread's context class loader, not system class loader that is used in Paths.get():
                 for (FileSystemProvider provider : ServiceLoader.load(FileSystemProvider.class)) {
                     if (provider.getScheme().equalsIgnoreCase(scheme)) {
@@ -84,5 +103,28 @@ public class NioPathDeserializer extends StdScalarDeserializer<Path>
         } catch (Throwable e) {
             return (Path) ctxt.handleInstantiationProblem(handledType(), value, e);
         }
+    }
+
+    protected boolean _isSchemeAllowed(String scheme) {
+        if (_allowedSchemes.contains(scheme)) {
+            return true;
+        }
+        for (String allowed : _allowedSchemes) {
+            if (scheme.equalsIgnoreCase(allowed)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected String _allowedSchemesDesc() {
+        StringBuilder sb = new StringBuilder("[");
+        for (String scheme : _allowedSchemes) {
+            if (sb.length() > 1) {
+                sb.append(", ");
+            }
+            sb.append('"').append(scheme).append('"');
+        }
+        return sb.append(']').toString();
     }
 }
