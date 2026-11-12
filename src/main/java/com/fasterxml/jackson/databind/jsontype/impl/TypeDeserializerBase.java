@@ -24,7 +24,11 @@ public abstract class TypeDeserializerBase
     implements java.io.Serializable
 {
     private static final long serialVersionUID = 1;
-    
+
+    final static int MAX_CACHED_TYPE_IDS = 1000;
+
+    final static int MAX_CACHED_TYPE_ID_LENGTH = 256;
+
     protected final TypeIdResolver _idResolver;
     
     protected final JavaType _baseType;
@@ -165,7 +169,13 @@ public abstract class TypeDeserializerBase
                         return NullifyingDeserializer.instance;
                     }
                     // ... would this actually work?
-                    deser = ctxt.findContextualValueDeserializer(actual, _property);
+                    // [databind#6203] Not cached: a handler's answer holds only for readers with
+                    // that handler, and it may map any number of unrecognized ids to a type
+                    return ctxt.findContextualValueDeserializer(actual, _property);
+                }
+                // [databind#6203] Not cached either, as its use depends on reader configuration
+                if (deser == NullifyingDeserializer.instance) {
+                    return deser;
                 }
             } else {
                 /* 16-Dec-2010, tatu: Since nominal type we get here has no (generic) type parameters,
@@ -192,6 +202,12 @@ public abstract class TypeDeserializerBase
                     }
                 }
                 deser = ctxt.findContextualValueDeserializer(type, _property);
+            }
+            if (typeId.length() > MAX_CACHED_TYPE_ID_LENGTH) {
+                return deser;
+            }
+            if (_deserializers.size() >= MAX_CACHED_TYPE_IDS) {
+                _deserializers.clear();
             }
             _deserializers.put(typeId, deser);
         }
