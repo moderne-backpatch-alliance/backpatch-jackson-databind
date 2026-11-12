@@ -410,10 +410,11 @@ _containerType,
         private final Class<?> _elementType;
         private final Collection<Object> _result;
 
-        /**
-         * A list of {@link CollectionReferring} to maintain ordering.
-         */
-        private List<CollectionReferring> _accumulator = new ArrayList<CollectionReferring>();
+        private final List<Object> _pending = new ArrayList<>();
+
+        private int _pendingStart;
+
+        private final Map<Object, Deque<CollectionReferring>> _unresolvedById = new HashMap<>();
 
         public CollectionReferringAccumulator(Class<?> elementType, Collection<Object> result) {
             _elementType = elementType;
@@ -422,60 +423,88 @@ _containerType,
 
         public void add(Object value)
         {
-            if (_accumulator.isEmpty()) {
+            if (_pendingStart == _pending.size()) {
                 _result.add(value);
             } else {
-                CollectionReferring ref = _accumulator.get(_accumulator.size() - 1);
-                ref.next.add(value);
+                _pending.add(value);
             }
         }
 
         public Referring handleUnresolvedReference(UnresolvedForwardReference reference)
         {
             CollectionReferring id = new CollectionReferring(this, reference, _elementType);
-            _accumulator.add(id);
+            _pending.add(id);
+            Deque<CollectionReferring> refs = _unresolvedById.get(reference.getUnresolvedId());
+            if (refs == null) {
+                refs = new ArrayDeque<>(2);
+                _unresolvedById.put(reference.getUnresolvedId(), refs);
+            }
+            refs.add(id);
             return id;
         }
 
         public void resolveForwardReference(Object id, Object value) throws IOException
         {
-            Iterator<CollectionReferring> iterator = _accumulator.iterator();
-            // Resolve ordering after resolution of an id. This mean either:
-            // 1- adding to the result collection in case of the first unresolved id.
-            // 2- merge the content of the resolved id with its previous unresolved id.
-            Collection<Object> previous = _result;
-            while (iterator.hasNext()) {
-                CollectionReferring ref = iterator.next();
-                if (ref.hasId(id)) {
-                    iterator.remove();
-                    previous.add(value);
-                    previous.addAll(ref.next);
-                    return;
-                }
-                previous = ref.next;
+            Deque<CollectionReferring> refs = _unresolvedById.get(id);
+            if (refs == null) {
+                throw new IllegalArgumentException("Trying to resolve a forward reference with id [" + id
+                        + "] that wasn't previously seen as unresolved.");
             }
+            CollectionReferring ref = refs.removeFirst();
+            if (refs.isEmpty()) {
+                _unresolvedById.remove(id);
+            }
+            ref.resolve(value);
 
-            throw new IllegalArgumentException("Trying to resolve a forward reference with id [" + id
-                    + "] that wasn't previously seen as unresolved.");
+            final int end = _pending.size();
+            int i = _pendingStart;
+            for (; i < end; ++i) {
+                Object pending = _pending.get(i);
+                if (pending instanceof CollectionReferring) {
+                    CollectionReferring pendingRef = (CollectionReferring) pending;
+                    if (!pendingRef.isResolved()) {
+                        break;
+                    }
+                    pending = pendingRef.resolvedValue();
+                }
+                _result.add(pending);
+                _pending.set(i, null);
+            }
+            if (i == end) {
+                _pending.clear();
+                _pendingStart = 0;
+            } else {
+                _pendingStart = i;
+            }
         }
     }
 
     /**
-     * Helper class to maintain processing order of value. The resolved
-     * object associated with {@link #_id} comes before the values in
-     * {@link #next}.
+     * Placeholder for a value that is a forward reference, to maintain processing order
+     * of values: holds the resolved value, once the reference has been resolved.
      */
     private final static class CollectionReferring extends Referring {
         private final CollectionReferringAccumulator _parent;
-        public final List<Object> next = new ArrayList<Object>();
-        
+
+        private boolean _resolved;
+        private Object _value;
+
         CollectionReferring(CollectionReferringAccumulator parent,
                 UnresolvedForwardReference reference, Class<?> contentType)
         {
             super(reference, contentType);
             _parent = parent;
         }
-        
+
+        void resolve(Object value) {
+            _value = value;
+            _resolved = true;
+        }
+
+        boolean isResolved() { return _resolved; }
+
+        Object resolvedValue() { return _value; }
+
         @Override
         public void handleResolvedForwardReference(Object id, Object value) throws IOException {
             _parent.resolveForwardReference(id, value);
