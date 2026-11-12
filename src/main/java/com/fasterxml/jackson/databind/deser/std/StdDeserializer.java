@@ -662,7 +662,7 @@ public abstract class StdDeserializer<T>
                 }
             }
             if (ctxt.isEnabled(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)) {
-                final T parsed = deserialize(p, ctxt);
+                final T parsed = _deserializeWrappedValue(p, ctxt);
                 if (p.nextToken() != JsonToken.END_ARRAY) {
                     handleMissingEndArrayForSingle(p, ctxt);
                 }
