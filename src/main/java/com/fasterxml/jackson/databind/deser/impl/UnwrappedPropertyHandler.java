@@ -55,8 +55,12 @@ public class UnwrappedPropertyHandler
             Object bean, TokenBuffer buffered)
         throws IOException
     {
+        final Class<?> activeView = ctxt.getActiveView();
         for (int i = 0, len = _properties.size(); i < len; ++i) {
             SettableBeanProperty prop = _properties.get(i);
+            if ((activeView != null) && !prop.visibleInView(activeView)) {
+                continue;
+            }
             JsonParser p = buffered.asParser();
             p.nextToken();
             prop.deserializeAndSet(p, ctxt, bean);
