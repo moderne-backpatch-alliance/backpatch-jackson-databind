@@ -1444,6 +1444,12 @@ public abstract class BeanDeserializerBase
             if (t == JsonToken.END_ARRAY && ctxt.isEnabled(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)) {
                 return null;
             }
+            if (t == JsonToken.START_ARRAY) {
+                return ctxt.handleUnexpectedToken(handledType(), JsonToken.START_ARRAY, p,
+"Cannot deserialize value of type %s from deeply-nested JSON Array: only single wrapper allowed with `%s`",
+                        ClassUtil.nameOf(handledType()),
+                        "DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS");
+            }
             final Object value = deserialize(p, ctxt);
             if (p.nextToken() != JsonToken.END_ARRAY) {
                 handleMissingEndArrayForSingle(p, ctxt);
