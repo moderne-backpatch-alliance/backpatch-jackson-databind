@@ -1,6 +1,6 @@
 schema: osera-patch-evidence/0.1.0
 producer: moderne
-release: 2.9.10.8.1-backpatch-00008
+release: 2.9.10.8.1-backpatch-00009
 baseline: v2.9.10.8+backpatch.baseline
 fixes:
   - cve: CVE-2020-36518
@@ -66,12 +66,20 @@ fixes:
     basis: adapted
     artifacts:
       - com.fasterxml.jackson.core:jackson-databind
-    note: "New in this release; ported onto 2.9.10.8; fixed at 2.9.10.8.1-backpatch-00008 (backpatch-jackson-databind@5448203..dfb0b98). jackson-databind now deserializes an `InetAddress` only from an IPv4 or IPv6 address literal and no longer looks up host names (CVE-2026-77310). If your app reads `InetAddress` values that hold a host name, `localhost` included, deserialization fails with `InvalidFormatException` (\"Not a valid IP address string literal\"), which also hits values Jackson wrote itself: an address that carries a name, such as `InetAddress.getLoopbackAddress()`, is written as `\"localhost\"`. Write IP literals instead, or hold the value as a `String` and call `InetAddress.getByName()` where you use it; `@JsonFormat(shape = JsonFormat.Shape.NUMBER)`, or the same format through `configOverride(InetAddress.class)`, makes Jackson write the numeric form. A `DeserializationProblemHandler` whose `handleWeirdStringValue` returns `InetAddress.getByName(value)` restores the lookup, which brings back the exposure the fix closes for untrusted input."
+    note: "Carried from 2.9.10.8.1-backpatch-00008; ported onto 2.9.10.8; fixed at 2.9.10.8.1-backpatch-00008 (backpatch-jackson-databind@5448203..dfb0b98). jackson-databind now deserializes an `InetAddress` only from an IPv4 or IPv6 address literal and no longer looks up host names (CVE-2026-77310). If your app reads `InetAddress` values that hold a host name, `localhost` included, deserialization fails with `InvalidFormatException` (\"Not a valid IP address string literal\"), which also hits values Jackson wrote itself: an address that carries a name, such as `InetAddress.getLoopbackAddress()`, is written as `\"localhost\"`. Write IP literals instead, or hold the value as a `String` and call `InetAddress.getByName()` where you use it; `@JsonFormat(shape = JsonFormat.Shape.NUMBER)`, or the same format through `configOverride(InetAddress.class)`, makes Jackson write the numeric form. A `DeserializationProblemHandler` whose `handleWeirdStringValue` returns `InetAddress.getByName(value)` restores the lookup, which brings back the exposure the fix closes for untrusted input."
+  - cve: CVE-2026-91776
+    upstream_fix_url: https://github.com/FasterXML/jackson-databind/commit/2870d1d6dc1b7e1c07ee11dd5b04ab71cddbb577
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-91776
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-databind/commit/ccd3c7d
+    basis: adapted
+    artifacts:
+      - com.fasterxml.jackson.core:jackson-databind
+    note: New in this release; ported onto 2.9.10.8; fixed at 2.9.10.8.1-backpatch-00009 (backpatch-jackson-databind@ccd3c7d).
 tests:
-  commit: dfb0b980d035c3a503ffccda5c301bb417d33c2b
+  commit: ccd3c7daf038f11b7c7e11dd40c7da784f40c38d
   command: mvn -B -T1  -Dmaven.test.failure.ignore=true clean test
   runtime: openjdk version 1.8.0_382, Apache Maven 3.9.16
-  report: jackson-databind-2.9.10.8.1-backpatch-00008-tests.zip
-  report_sha256: 04f6d414a70c880cf4e32b6f11955131df83a794f0360e529a45621e170d12df
+  report: jackson-databind-2.9.10.8.1-backpatch-00009-tests.zip
+  report_sha256: 518da7b9378e36cb37235d46f71ab8d4ad83b9af89a96a409635be6e7a999a1e
   result: pass
-  note: "2181 tests at the patch commit, 0 of them skipped by the suite, 0 failed, 0 errors. Suite run with TZ=UTC: SqlDateSerializationTest#testSqlDateConfigOverride formats a local-midnight java.sql.Date in GMT and is a day off east of UTC; upstream's CI and the weekend's Linux runs use UTC."
+  note: "2188 tests at the patch commit, 0 of them skipped by the suite, 0 failed, 0 errors. Suite run with TZ=UTC: SqlDateSerializationTest#testSqlDateConfigOverride formats a local-midnight java.sql.Date in GMT and is a day off east of UTC; upstream's CI and the weekend's Linux runs use UTC."
