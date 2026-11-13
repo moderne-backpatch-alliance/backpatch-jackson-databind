@@ -1,6 +1,6 @@
 schema: osera-patch-evidence/0.1.0
 producer: moderne
-release: 2.9.10.8.1-backpatch-00009
+release: 2.9.10.8.1-backpatch-00010
 baseline: v2.9.10.8+backpatch.baseline
 fixes:
   - cve: CVE-2020-36518
@@ -74,12 +74,20 @@ fixes:
     basis: adapted
     artifacts:
       - com.fasterxml.jackson.core:jackson-databind
-    note: New in this release; ported onto 2.9.10.8; fixed at 2.9.10.8.1-backpatch-00009 (backpatch-jackson-databind@ccd3c7d).
+    note: Carried from 2.9.10.8.1-backpatch-00009; ported onto 2.9.10.8; fixed at 2.9.10.8.1-backpatch-00009 (backpatch-jackson-databind@ccd3c7d).
+  - cve: CVE-2026-91777
+    upstream_fix_url: https://github.com/FasterXML/jackson-databind/commit/37ad9b81712cbb9fb62c2d2c1813593252a24b67
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-91777
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-databind/commit/585497e
+    basis: adapted
+    artifacts:
+      - com.fasterxml.jackson.core:jackson-databind
+    note: New in this release; ported onto 2.9.10.8; fixed at 2.9.10.8.1-backpatch-00010 (backpatch-jackson-databind@585497e).
 tests:
-  commit: ccd3c7daf038f11b7c7e11dd40c7da784f40c38d
+  commit: 585497e134e0bfc71ee5184a40794b12506ef4b9
   command: mvn -B -T1  -Dmaven.test.failure.ignore=true clean test
   runtime: openjdk version 1.8.0_382, Apache Maven 3.9.16
-  report: jackson-databind-2.9.10.8.1-backpatch-00009-tests.zip
-  report_sha256: 518da7b9378e36cb37235d46f71ab8d4ad83b9af89a96a409635be6e7a999a1e
+  report: jackson-databind-2.9.10.8.1-backpatch-00010-tests.zip
+  report_sha256: 5794809593630b2c2297080827be300bd4112765bc90de6193bab02ce3a867b3
   result: pass
-  note: "2188 tests at the patch commit, 0 of them skipped by the suite, 0 failed, 0 errors. Suite run with TZ=UTC: SqlDateSerializationTest#testSqlDateConfigOverride formats a local-midnight java.sql.Date in GMT and is a day off east of UTC; upstream's CI and the weekend's Linux runs use UTC."
+  note: "2192 tests at the patch commit, 0 of them skipped by the suite, 0 failed, 0 errors. Suite run with TZ=UTC: SqlDateSerializationTest#testSqlDateConfigOverride formats a local-midnight java.sql.Date in GMT and is a day off east of UTC; upstream's CI and the weekend's Linux runs use UTC."
