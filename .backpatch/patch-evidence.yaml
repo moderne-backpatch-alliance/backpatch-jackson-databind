@@ -1,6 +1,6 @@
 schema: osera-patch-evidence/0.1.0
 producer: moderne
-release: 2.9.10.8.1-backpatch-00007
+release: 2.9.10.8.1-backpatch-00008
 baseline: v2.9.10.8+backpatch.baseline
 fixes:
   - cve: CVE-2020-36518
@@ -58,12 +58,20 @@ fixes:
     basis: adapted
     artifacts:
       - com.fasterxml.jackson.core:jackson-databind
-    note: New in this release; ported onto 2.9.10.8; fixed at 2.9.10.8.1-backpatch-00007 (backpatch-jackson-databind@8c8847d).
+    note: Carried from 2.9.10.8.1-backpatch-00007; ported onto 2.9.10.8; fixed at 2.9.10.8.1-backpatch-00007 (backpatch-jackson-databind@8c8847d).
+  - cve: CVE-2026-77310
+    upstream_fix_url: https://github.com/advisories/GHSA-vvgp-rfg2-7rr6
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-77310
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-databind/compare/5448203~1...dfb0b98
+    basis: adapted
+    artifacts:
+      - com.fasterxml.jackson.core:jackson-databind
+    note: "New in this release; ported onto 2.9.10.8; fixed at 2.9.10.8.1-backpatch-00008 (backpatch-jackson-databind@5448203..dfb0b98). jackson-databind now deserializes an `InetAddress` only from an IPv4 or IPv6 address literal and no longer looks up host names (CVE-2026-77310). If your app reads `InetAddress` values that hold a host name, `localhost` included, deserialization fails with `InvalidFormatException` (\"Not a valid IP address string literal\"), which also hits values Jackson wrote itself: an address that carries a name, such as `InetAddress.getLoopbackAddress()`, is written as `\"localhost\"`. Write IP literals instead, or hold the value as a `String` and call `InetAddress.getByName()` where you use it; `@JsonFormat(shape = JsonFormat.Shape.NUMBER)`, or the same format through `configOverride(InetAddress.class)`, makes Jackson write the numeric form. A `DeserializationProblemHandler` whose `handleWeirdStringValue` returns `InetAddress.getByName(value)` restores the lookup, which brings back the exposure the fix closes for untrusted input."
 tests:
-  commit: 8c8847d1a5d56f718ec8b3a86ad431aed9adbe41
+  commit: dfb0b980d035c3a503ffccda5c301bb417d33c2b
   command: mvn -B -T1  -Dmaven.test.failure.ignore=true clean test
   runtime: openjdk version 1.8.0_382, Apache Maven 3.9.16
-  report: jackson-databind-2.9.10.8.1-backpatch-00007-tests.zip
-  report_sha256: 2074eae83dfbcfc19209e6fc0b4feb6721efae58a4b00c58039ecd413525fbb6
+  report: jackson-databind-2.9.10.8.1-backpatch-00008-tests.zip
+  report_sha256: 04f6d414a70c880cf4e32b6f11955131df83a794f0360e529a45621e170d12df
   result: pass
-  note: "2179 tests at the patch commit, 0 of them skipped by the suite, 0 failed, 0 errors. Suite run with TZ=UTC: SqlDateSerializationTest#testSqlDateConfigOverride formats a local-midnight java.sql.Date in GMT and is a day off east of UTC; upstream's CI and the weekend's Linux runs use UTC."
+  note: "2181 tests at the patch commit, 0 of them skipped by the suite, 0 failed, 0 errors. Suite run with TZ=UTC: SqlDateSerializationTest#testSqlDateConfigOverride formats a local-midnight java.sql.Date in GMT and is a day off east of UTC; upstream's CI and the weekend's Linux runs use UTC."
