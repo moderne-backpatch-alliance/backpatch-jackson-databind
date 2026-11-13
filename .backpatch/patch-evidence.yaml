@@ -1,0 +1,21 @@
+schema: osera-patch-evidence/0.1.0
+producer: moderne
+release: 2.9.10.8.1-backpatch-00001
+baseline: v2.9.10.8+backpatch.baseline
+fixes:
+  - cve: CVE-2020-36518
+    upstream_fix_url: https://github.com/FasterXML/jackson-databind/commit/83b928dab9ba6ef81cf48987fcd12071e1ddb0c9
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2020-36518
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-databind/compare/fd61dfb~1...67b5e7b
+    basis: adapted
+    artifacts:
+      - com.fasterxml.jackson.core:jackson-databind
+    note: New in this release; ported onto 2.9.10.8; fixed at 2.9.10.8.1-backpatch-00001 (backpatch-jackson-databind@fd61dfb..67b5e7b).
+tests:
+  commit: 67b5e7ba2b794dd828e214c8bd045c5058baaa20
+  command: mvn -B -T1  -Dmaven.test.failure.ignore=true clean test
+  runtime: openjdk version 1.8.0_382, Apache Maven 3.9.16
+  report: jackson-databind-2.9.10.8.1-backpatch-00001-tests.zip
+  report_sha256: a7581d2de768a383c4072dd697a492cc81a7316d965ab33871ee7d1bf95f68da
+  result: pass
+  note: "2158 tests at the patch commit, 0 of them skipped by the suite, 0 failed, 0 errors. Suite run with TZ=UTC: SqlDateSerializationTest#testSqlDateConfigOverride formats a local-midnight java.sql.Date in GMT and is a day off east of UTC; upstream's CI and the weekend's Linux runs use UTC."
