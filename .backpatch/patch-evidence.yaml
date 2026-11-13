@@ -1,6 +1,6 @@
 schema: osera-patch-evidence/0.1.0
 producer: moderne
-release: 2.9.10.8.1-backpatch-00004
+release: 2.9.10.8.1-backpatch-00005
 baseline: v2.9.10.8+backpatch.baseline
 fixes:
   - cve: CVE-2020-36518
@@ -34,12 +34,20 @@ fixes:
     basis: adapted
     artifacts:
       - com.fasterxml.jackson.core:jackson-databind
-    note: New in this release; ported onto 2.9.10.8; fixed at 2.9.10.8.1-backpatch-00004 (backpatch-jackson-databind@f8ec59c).
+    note: Carried from 2.9.10.8.1-backpatch-00004; ported onto 2.9.10.8; fixed at 2.9.10.8.1-backpatch-00004 (backpatch-jackson-databind@f8ec59c).
+  - cve: CVE-2026-54514
+    upstream_fix_url: https://github.com/advisories/GHSA-hgj6-7826-r7m5
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-54514
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-databind/compare/3f13f16~1...ae0bc69
+    basis: adapted
+    artifacts:
+      - com.fasterxml.jackson.core:jackson-databind
+    note: "New in this release; ported onto 2.9.10.8; fixed at 2.9.10.8.1-backpatch-00005 (backpatch-jackson-databind@3f13f16..ae0bc69). jackson-databind no longer looks up the host when it deserializes an `InetSocketAddress` (CVE-2026-54514), so every value comes back unresolved, `\"127.0.0.1:8080\"` included. If your app reads socket addresses from JSON and connects with them or calls `getAddress()`, the connect now throws `UnknownHostException` and `getAddress()` returns null. Resolve the address yourself where you use it: `new InetSocketAddress(addr.getHostString(), addr.getPort())` does the lookup at that point."
 tests:
-  commit: f8ec59cba0d75d6089da75ca4053809dc71d0770
+  commit: ae0bc69a3b8b1a022675a5cecfa568c4366660fe
   command: mvn -B -T1  -Dmaven.test.failure.ignore=true clean test
   runtime: openjdk version 1.8.0_382, Apache Maven 3.9.16
-  report: jackson-databind-2.9.10.8.1-backpatch-00004-tests.zip
-  report_sha256: 508a298b1f44997f47362172041b3e88549ee261b3f12ac7f1749f36f92a9549
+  report: jackson-databind-2.9.10.8.1-backpatch-00005-tests.zip
+  report_sha256: 5e52dbbf40588400d780fdf88c15573b2aeadac810a19986448cc0fa7a7ba1f5
   result: pass
-  note: "2172 tests at the patch commit, 0 of them skipped by the suite, 0 failed, 0 errors. Suite run with TZ=UTC: SqlDateSerializationTest#testSqlDateConfigOverride formats a local-midnight java.sql.Date in GMT and is a day off east of UTC; upstream's CI and the weekend's Linux runs use UTC."
+  note: "2173 tests at the patch commit, 0 of them skipped by the suite, 0 failed, 0 errors. Suite run with TZ=UTC: SqlDateSerializationTest#testSqlDateConfigOverride formats a local-midnight java.sql.Date in GMT and is a day off east of UTC; upstream's CI and the weekend's Linux runs use UTC."
