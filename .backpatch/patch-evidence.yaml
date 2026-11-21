@@ -1,6 +1,6 @@
 schema: osera-patch-evidence/0.1.0
 producer: moderne
-release: 2.15.4.1-backpatch-00021
+release: 2.15.4.1-backpatch-00022
 baseline: v2.15.4+backpatch.baseline
 fixes:
   - cve: CVE-2026-18401
@@ -174,10 +174,19 @@ fixes:
       - com.fasterxml.jackson.core:jackson-core
       - com.fasterxml.jackson.jr:jackson-jr-all
     note: Carried from 2.15.4.1-backpatch-00019; ported onto 2.15.4; fixed at 2.15.4.1-backpatch-00019 (backpatch-jackson-core@552b1ac).
+  - cve: CVE-2026-104895
+    upstream_fix_url: https://github.com/FasterXML/jackson-dataformats-binary/commit/0a2cbbb693065ead271326f7eaaf9304c47941a2
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-104895
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-dataformats-binary/commit/e708bdb
+    basis: adapted
+    artifacts:
+      - com.fasterxml.jackson.dataformat:jackson-dataformat-smile
+    note: New in this release; ported onto 2.15.4; fixed at 2.15.4.1-backpatch-00022 (backpatch-jackson-dataformats-binary@e708bdb).
 tests:
-  commit: 199641377f01c35aa48ef4922d50ed167d6e2e34
+  commit: 87baba6e7c331c7acd751f20719ee82d384007de
   command: none in this repository
   runtime: none, no build or test ran for this release
-  report: carried, see the evidence of the release named in the note
+  report: jackson-dataformat-smile-2.15.4.1-backpatch-00022-tests.zip
+  report_sha256: dfac017268f09997ea8c2f91838478e0f4f9811cf9bd6e164dc641350fa9a7cf
   result: pass
-  note: "this release is a tooling update, it carries no new fix, nothing ran here; its test provenance is tooling-2026-11-05-jackson-2.15: a tooling update of moderne-backpatch-alliance/backpatch-jackson-bom at v2.15.4.1-backpatch-00020, whose .backpatch/patch-evidence.yaml says what ran"
+  note: this release changes only the versions this repository pins, nothing ran here; its test provenance is CVE-2026-104895 carried by moderne-backpatch-alliance/backpatch-jackson-dataformats-binary at v2.15.4.1-backpatch-00022, whose .backpatch/patch-evidence.yaml records the tests that ran
