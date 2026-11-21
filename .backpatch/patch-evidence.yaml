@@ -1,6 +1,6 @@
 schema: osera-patch-evidence/0.1.0
 producer: moderne
-release: 2.9.10.8.1-backpatch-00012
+release: 2.9.10.8.1-backpatch-00013
 baseline: v2.9.10.8+backpatch.baseline
 fixes:
   - cve: CVE-2020-36518
@@ -98,12 +98,20 @@ fixes:
     basis: adapted
     artifacts:
       - com.fasterxml.jackson.dataformat:jackson-dataformat-smile
-    note: New in this release; ported onto 2.9.10.8; fixed at 2.9.10.1-backpatch-00012 (backpatch-jackson-dataformats-binary@73369ef).
+    note: Carried from 2.9.10.8.1-backpatch-00012; ported onto 2.9.10.8; fixed at 2.9.10.1-backpatch-00012 (backpatch-jackson-dataformats-binary@73369ef).
+  - cve: CVE-2026-68497
+    upstream_fix_url: https://github.com/FasterXML/jackson-databind/commit/a99b7e74c8928f43f6975773a8c862c8316178bd
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-68497
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-databind/commit/1bd62b7
+    basis: adapted
+    artifacts:
+      - com.fasterxml.jackson.core:jackson-databind
+    note: New in this release; ported onto 2.9.10.8; fixed at 2.9.10.8.1-backpatch-00013 (backpatch-jackson-databind@1bd62b7).
 tests:
-  commit: 1a0cc2d0c1f6f8d6f2be689f7e054043931b07d3
-  command: none in this repository
-  runtime: none, no build or test ran for this release
-  report: jackson-dataformat-smile-2.9.10.1-backpatch-00012-tests.zip
-  report_sha256: 5e091235d144c84f9318bfdd5cb97307ec8f100c426678bbec8880054ef34f13
+  commit: 1bd62b7cfdb38c462b5f2ced7a32d4c04dba72b6
+  command: mvn -B -T1  -Dmaven.test.failure.ignore=true clean test
+  runtime: openjdk version 1.8.0_382, Apache Maven 3.9.16
+  report: jackson-databind-2.9.10.8.1-backpatch-00013-tests.zip
+  report_sha256: df212efadf0c5f27688fd2c36e5d1d2c1647afbafc80d8c9e0ff645a57578d7f
   result: pass
-  note: this release changes only the versions this repository pins, nothing ran here; its test provenance is CVE-2026-104895 carried by moderne-backpatch-alliance/backpatch-jackson-dataformats-binary at v2.9.10.1-backpatch-00012, whose .backpatch/patch-evidence.yaml records the tests that ran
+  note: "2196 tests at the patch commit, 0 of them skipped by the suite, 0 failed, 0 errors. Suite run with TZ=UTC: SqlDateSerializationTest#testSqlDateConfigOverride formats a local-midnight java.sql.Date in GMT and is a day off east of UTC; upstream's CI and the weekend's Linux runs use UTC."
