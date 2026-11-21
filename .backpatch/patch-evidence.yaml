@@ -1,6 +1,6 @@
 schema: osera-patch-evidence/0.1.0
 producer: moderne
-release: 2.19.4.1-backpatch-00026
+release: 2.19.4.1-backpatch-00027
 baseline: v2.19.4+backpatch.baseline
 fixes:
   - cve: CVE-2026-18401
@@ -231,12 +231,20 @@ fixes:
     basis: adapted
     artifacts:
       - com.fasterxml.jackson.dataformat:jackson-dataformat-smile
-    note: New in this release; ported onto 2.19.4; fixed at 2.19.4.1-backpatch-00026 (backpatch-jackson-dataformats-binary@5925c3d).
+    note: Carried from 2.19.4.1-backpatch-00026; ported onto 2.19.4; fixed at 2.19.4.1-backpatch-00026 (backpatch-jackson-dataformats-binary@5925c3d).
+  - cve: CVE-2026-106554
+    upstream_fix_url: https://github.com/FasterXML/jackson-dataformats-binary/commit/5455b685970c068b33d706878922572e4a61e9ae
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-106554
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-dataformats-binary/commit/63f8bae
+    basis: adapted
+    artifacts:
+      - com.fasterxml.jackson.dataformat:jackson-dataformat-cbor
+    note: New in this release; ported onto 2.19.4; fixed at 2.19.4.1-backpatch-00027 (backpatch-jackson-dataformats-binary@63f8bae).
 tests:
-  commit: 6576336794c613bba7a011a3b65bf271cdfd9786
+  commit: 35032dfab8973fd9bf8b189a434ae6e8ae95b805
   command: none in this repository
   runtime: none, no build or test ran for this release
-  report: jackson-dataformat-smile-2.19.4.1-backpatch-00026-tests.zip
-  report_sha256: 3df90ad8681245bc2e1e5d202802750dc4a675f70025fd8b3fa7beeb6bfa7938
+  report: jackson-dataformat-cbor-2.19.4.1-backpatch-00027-tests.zip
+  report_sha256: 455b85a7345781b34f45943c5f8c18ffba4641b8d36d37c5fc4351f64b3a4b9f
   result: pass
-  note: this release changes only the versions this repository pins, nothing ran here; its test provenance is CVE-2026-104895 carried by moderne-backpatch-alliance/backpatch-jackson-dataformats-binary at v2.19.4.1-backpatch-00026, whose .backpatch/patch-evidence.yaml records the tests that ran
+  note: this release changes only the versions this repository pins, nothing ran here; its test provenance is CVE-2026-106554 carried by moderne-backpatch-alliance/backpatch-jackson-dataformats-binary at v2.19.4.1-backpatch-00027, whose .backpatch/patch-evidence.yaml records the tests that ran
