@@ -1,6 +1,6 @@
 schema: osera-patch-evidence/0.1.0
 producer: moderne
-release: 2.19.4.1-backpatch-00023
+release: 2.19.4.1-backpatch-00024
 baseline: v2.19.4+backpatch.baseline
 fixes:
   - cve: CVE-2026-18401
@@ -208,10 +208,19 @@ fixes:
       - com.fasterxml.jackson.core:jackson-core
       - com.fasterxml.jackson.jr:jackson-jr-all
     note: Carried from 2.19.4.1-backpatch-00021; ported onto 2.19.4; fixed at 2.19.4.1-backpatch-00021 (backpatch-jackson-core@36b04e7).
+  - cve: CVE-2026-68495
+    upstream_fix_url: https://github.com/FasterXML/jackson-dataformats-binary/pull/731
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-68495
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-dataformats-binary/compare/1ce6aba~1...2774258
+    basis: adapted
+    artifacts:
+      - com.fasterxml.jackson.dataformat:jackson-dataformat-cbor
+    note: New in this release; ported onto 2.19.4; fixed at 2.19.4.1-backpatch-00024 (backpatch-jackson-dataformats-binary@1ce6aba..2774258).
 tests:
-  commit: 7bca9c04cdd70d476a84ee719d6ca51134dd3ae4
+  commit: 3bf7aa13fe2cfdb20dabfaade179696650b607c7
   command: none in this repository
   runtime: none, no build or test ran for this release
-  report: carried, see the evidence of the release named in the note
+  report: jackson-dataformat-cbor-2.19.4.1-backpatch-00024-tests.zip
+  report_sha256: a78f577f58f79cc27b0b0fd280b465d922c6f6d81f8270a6230c703dc403bda5
   result: pass
-  note: "this release is a tooling update, it carries no new fix, nothing ran here; its test provenance is tooling-2026-11-05-jackson-2.19: a tooling update of moderne-backpatch-alliance/backpatch-jackson-bom at v2.19.4.1-backpatch-00022, whose .backpatch/patch-evidence.yaml says what ran"
+  note: this release changes only the versions this repository pins, nothing ran here; its test provenance is CVE-2026-68495 carried by moderne-backpatch-alliance/backpatch-jackson-dataformats-binary at v2.19.4.1-backpatch-00024, whose .backpatch/patch-evidence.yaml records the tests that ran
