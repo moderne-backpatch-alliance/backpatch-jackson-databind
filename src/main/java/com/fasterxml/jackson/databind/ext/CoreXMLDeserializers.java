@@ -99,10 +99,16 @@ public class CoreXMLDeserializers extends Deserializers.Base
         {
             switch (_kind) {
             case TYPE_DURATION:
+                // [databind#6127] whole-value length bounds every component that
+                // newDuration() hands to the O(n^2) BigInteger/BigDecimal(String)
+                _verifyNumberLength(ctxt, value);
                 return _dataTypeFactory.newDuration(value);
             case TYPE_QNAME:
                 return QName.valueOf(value);
             case TYPE_G_CALENDAR:
+                // [databind#6127] as above, for fractional seconds parsed by
+                // newXMLGregorianCalendar(): check before _parseDate() too
+                _verifyNumberLength(ctxt, value);
                 Date d;
                 try {
                     d = _parseDate(value, ctxt);
@@ -115,6 +121,20 @@ public class CoreXMLDeserializers extends Deserializers.Base
                 return _gregorianFromDate(ctxt, d);
             }
             throw new IllegalStateException();
+        }
+
+        // Upstream's StreamReadConstraints.DEFAULT_MAX_NUM_LEN; 2.9 has no StreamReadConstraints.
+        private final static int MAX_NUMBER_LENGTH = 1000;
+
+        private void _verifyNumberLength(DeserializationContext ctxt, String value)
+            throws IOException
+        {
+            final int len = value.length();
+            if (len > MAX_NUMBER_LENGTH) {
+                throw new JsonParseException(ctxt.getParser(), String.format(
+                        "Number value length (%d) exceeds the maximum allowed (%d)",
+                        len, MAX_NUMBER_LENGTH));
+            }
         }
 
         protected XMLGregorianCalendar _gregorianFromDate(DeserializationContext ctxt,
