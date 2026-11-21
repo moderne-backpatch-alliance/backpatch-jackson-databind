@@ -1,6 +1,6 @@
 schema: osera-patch-evidence/0.1.0
 producer: moderne
-release: 2.9.10.8.1-backpatch-00010
+release: 2.9.10.8.1-backpatch-00011
 baseline: v2.9.10.8+backpatch.baseline
 fixes:
   - cve: CVE-2020-36518
@@ -82,12 +82,20 @@ fixes:
     basis: adapted
     artifacts:
       - com.fasterxml.jackson.core:jackson-databind
-    note: New in this release; ported onto 2.9.10.8; fixed at 2.9.10.8.1-backpatch-00010 (backpatch-jackson-databind@585497e).
+    note: Carried from 2.9.10.8.1-backpatch-00010; ported onto 2.9.10.8; fixed at 2.9.10.8.1-backpatch-00010 (backpatch-jackson-databind@585497e).
+  - cve: CVE-2020-28491
+    upstream_fix_url: https://github.com/FasterXML/jackson-dataformats-binary/commit/de072d314af8f5f269c8abec6930652af67bc8e6
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2020-28491
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-dataformats-binary/commit/5a08dc7
+    basis: adapted
+    artifacts:
+      - com.fasterxml.jackson.dataformat:jackson-dataformat-cbor
+    note: New in this release; ported onto 2.9.10.8; fixed at 2.9.10.1-backpatch-00011 (backpatch-jackson-dataformats-binary@5a08dc7).
 tests:
-  commit: 585497e134e0bfc71ee5184a40794b12506ef4b9
-  command: mvn -B -T1  -Dmaven.test.failure.ignore=true clean test
-  runtime: openjdk version 1.8.0_382, Apache Maven 3.9.16
-  report: jackson-databind-2.9.10.8.1-backpatch-00010-tests.zip
-  report_sha256: 5794809593630b2c2297080827be300bd4112765bc90de6193bab02ce3a867b3
+  commit: 19d06c6c7a07f88b3783457e18246c3311efdbff
+  command: none in this repository
+  runtime: none, no build or test ran for this release
+  report: jackson-dataformat-cbor-2.9.10.1-backpatch-00011-tests.zip
+  report_sha256: 16d91df5b6c0fbf69214e747c26842a3caf30acaedeebeb8fdb07dcc63e48102
   result: pass
-  note: "2192 tests at the patch commit, 0 of them skipped by the suite, 0 failed, 0 errors. Suite run with TZ=UTC: SqlDateSerializationTest#testSqlDateConfigOverride formats a local-midnight java.sql.Date in GMT and is a day off east of UTC; upstream's CI and the weekend's Linux runs use UTC."
+  note: this release changes only the versions this repository pins, nothing ran here; its test provenance is CVE-2020-28491 carried by moderne-backpatch-alliance/backpatch-jackson-dataformats-binary at v2.9.10.1-backpatch-00011, whose .backpatch/patch-evidence.yaml records the tests that ran
