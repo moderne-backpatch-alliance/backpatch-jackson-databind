@@ -1,0 +1,21 @@
+schema: osera-patch-evidence/0.1.0
+producer: moderne
+release: 2.12.7.2.1-backpatch-00001
+baseline: v2.12.7.2+backpatch.baseline
+fixes:
+  - cve: CVE-2025-49128
+    upstream_fix_url: https://github.com/FasterXML/jackson-core/commit/b89098e400be712102f6bee5393e8af259bf7737
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2025-49128
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jackson-core/compare/005c2a1~1...22a705b
+    basis: adapted
+    artifacts:
+      - com.fasterxml.jackson.core:jackson-core
+    note: New in this release; ported onto 2.12.7.2; fixed at 2.12.7.1-backpatch-00001 (backpatch-jackson-core@005c2a1..22a705b).
+tests:
+  commit: 2e1b6f217aa8da629ff24509060b1108ec776198
+  command: none in this repository
+  runtime: none, no build or test ran for this release
+  report: jackson-core-2.12.7.1-backpatch-00001-tests.zip
+  report_sha256: 9911c0f5a6c70bc9e2c8ec886fcdab60440778ed175fed44d60fadb3df7b58a4
+  result: pass
+  note: this release changes only the versions this repository pins, nothing ran here; its test provenance is CVE-2025-49128 carried by moderne-backpatch-alliance/backpatch-jackson-core at v2.12.7.1-backpatch-00001, whose .backpatch/patch-evidence.yaml records the tests that ran
